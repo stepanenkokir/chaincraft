@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import Head from './components/Head.vue'
+import { useWebApp, useWebAppPopup } from 'vue-tg'
+
+const { initDataUnsafe } = useWebApp()
+
+const userInfo = initDataUnsafe.user
+const name = JSON.stringify(userInfo)||"User"
 </script>
 
 <template>
     <div class="page-container">
         <header>            
-            <Head name="Kirill" lang="en"/>            
+            <Head :name="name" lang="en"/>
         </header>
         
         <main class="content">

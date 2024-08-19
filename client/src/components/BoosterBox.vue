@@ -30,8 +30,8 @@
     })
 
     const iconsArr: { [key: string]: string[] } = {
-        'Move back': ['fas', 'arrow-left'],
-        'Change color': ['fas', 'palette'],
+        'Move back': ['fas', 'rotate-left'],
+        'Change color': ['fas', 'brush'],
         'Autoshow X': ['fas', 'eye'],
     }
 
