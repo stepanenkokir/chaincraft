@@ -6,7 +6,8 @@ import { useWebApp, useWebAppPopup } from 'vue-tg'
 const { initDataUnsafe } = useWebApp()
 
 const userInfo = initDataUnsafe.user
-const name = JSON.stringify(userInfo)||"User"
+const name = `${userInfo.first_name}?${userInfo.first_name}:${userInfo.username}`||"User"
+const lang = userInfo.language_code || "en"
 </script>
 
 <template>
