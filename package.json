@@ -16,6 +16,7 @@
     "nodemon": "^3.1.4"
   },
   "dependencies": {
+    "config": "^3.3.12",
     "express": "^4.19.2"
   }
 }

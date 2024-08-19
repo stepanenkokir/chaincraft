@@ -33,4 +33,5 @@ node_modules
 client/node_modules
 client/dist
 client/.vscode
+config
 
