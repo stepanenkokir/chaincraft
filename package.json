@@ -1,0 +1,21 @@
+{
+  "name": "chaincraft",
+  "version": "1.0.0",
+  "description": "Telegram miniApp",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon",
+    "build": "npm run build --prefix client",
+    "client": "npm run dev --prefix client"
+  },
+  "keywords": [],
+  "author": "Kirill Stepanenko <stepanenkokir@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
