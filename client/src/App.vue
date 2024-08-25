@@ -120,7 +120,7 @@
     const loadTelegramUserInfo = async ( ) =>{
         isLoading.value = true 
         try {
-            const loadUserInfo = await checkUser( userInfo.value, initData )
+            const loadUserInfo = await checkUser( )
             return loadUserInfo
         } catch (error) {
             console.log("Error loadTelegramUserInfo:",error)

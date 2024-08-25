@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client'
-import { useWebAppPopup } from 'vue-tg'
+import { useWebAppPopup , useWebApp} from 'vue-tg'
 import type { ServerInfoType } from '@/types/ServerInfoType'
 
 const { showAlert } = useWebAppPopup()
@@ -41,9 +41,13 @@ export const initializeSocketConnection = async () => {
 }
 
 // Функция для загрузки информации о пользователе с сервера
-export const checkUser = (userInfo: any, userData: any): Promise<ServerInfoType> => {
+export const checkUser = (): Promise<ServerInfoType> => {
+
+    const { initDataUnsafe, initData } = useWebApp()
+
+    console.log(888, initDataUnsafe, initData)
     return new Promise((resolve, reject) => {       
-        socket.emit('checkUser', { userInfo })
+        socket.emit('checkUser', { userInfo: initDataUnsafe?.user, initData:initData })
         // Используем socket.once для одноразового прослушивания события
         socket.once('checkUserResponse', (response: any) => {
             if (!response || response.error) {

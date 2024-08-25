@@ -48,11 +48,12 @@ export const observeIOFoxGame = async (data) => {
 export const checkUser = async (socket, data ) => {
     console.log(data.userInfo, data.initData )
 
+
     const valid = verifyTelegramData(data.initData)
     socket.emit('checkUserResponse', {
         user_id: 112,
         lang:'ru',
-        user_name: `${data.userInfo.first_name}`, 
+        user_name: `${data.userInfo?.first_name ? data.userInfo.first_name : 'Unknown' }`, 
         balance: 9876,
     })
 }
