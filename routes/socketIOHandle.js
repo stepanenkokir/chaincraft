@@ -46,7 +46,6 @@ import crypto from 'crypto'
 // }
 
 export const checkUser = async (socket, data ) => {
-    console.log( data.initData )
     const validUser = verifyTelegramData(data.initData)
 
     if (!validUser){
@@ -90,8 +89,6 @@ const verifyTelegramData = (initData) => {
             .update(dataCheckString)
             .digest('hex')
 
-            console.log(params)
-            console.log(params.get('user'))
         const currUser = JSON.parse(params.get('user'))
         currUser.token = hash
 

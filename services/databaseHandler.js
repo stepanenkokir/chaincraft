@@ -38,7 +38,7 @@ export const findOrCreateUser = async ( userInfo ) =>{
             last_name       : userInfo.last_name,
             first_name      : userInfo.first_name,
             username        : userInfo.username,
-            token           : userInfo.hash,
+            token           : userInfo.token,
             balance         : 0,
         }
 
