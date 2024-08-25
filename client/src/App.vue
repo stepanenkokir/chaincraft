@@ -2,7 +2,7 @@
     <div>
         <div v-if="tutorialPage">           
             <main class="content">
-                <FirstPageView :user="userInfo" @start-game="handleStartGame" />
+                <FirstPageView :user="serverInfo" @start-game="handleStartGame" />
             </main> 
         </div>
         <div v-if="gameScreen>0">           
@@ -56,10 +56,12 @@
     const readyToShow = ref(false)
     const gameScreen = ref(0)
     
-    const { initDataUnsafe } = useWebApp()
+    const { initDataUnsafe, initData } = useWebApp()
     const isLoading = ref(false)
     const showQR = ref(false)
    
+    console.log(999,initDataUnsafe, initData)
+    
     const userInfo = ref( initDataUnsafe.user ? initDataUnsafe.user : <UserType>{
         id              : -1,
         first_name      : 'Tester1',
@@ -112,7 +114,7 @@
     const loadTelegramUserInfo = async ( ) =>{
         isLoading.value = true 
         try {
-            const loadUserInfo = await checkUser( userInfo.value )
+            const loadUserInfo = await checkUser( userInfo.value, initData )
             return loadUserInfo
         } catch (error) {
             console.log("Error loadTelegramUserInfo:",error)

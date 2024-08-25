@@ -2,7 +2,7 @@
     <div class="welcome-container">
       <h1>Welcome to the ChainCraft</h1>
       <p>
-        Welcome, {{ props.user.first_name }}! Get ready to dive into the world of ChainCraft.
+        Welcome, {{ props.user ? props.user.user_name : 'Stranger '}}! Get ready to dive into the world of ChainCraft.
         Explore, build, and conquer. Ready to start your adventure?
       </p>
       <p>
@@ -14,18 +14,17 @@
   
 <script setup lang="ts">
     import { MainButton } from 'vue-tg'
-    import type { UserType } from '../types/UserType'
+    import type {ServerInfoType} from '@/types/ServerInfoType'
 
     const props = defineProps({
         user:{
-            type      : Object as () => UserType,
+            type      : Object as () => ServerInfoType | null,
             required  : true
         }
     })
   
     const emit = defineEmits(['start-game'])
-     
-  
+
     const startGame = () => {
         emit('start-game')
     }

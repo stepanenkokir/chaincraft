@@ -26,7 +26,7 @@ export const initializeSocketConnection = async () => {
     })
 
     socket.on('connect', () => {
-        showAlertInfo(`Connected to the server: ${socket.id}`)
+       //showAlertInfo(`Connected to the server: ${socket.id}`)
     })
 
     socket.on('disconnect', () => {
@@ -41,22 +41,18 @@ export const initializeSocketConnection = async () => {
 }
 
 // Функция для загрузки информации о пользователе с сервера
-export const checkUser = (userInfo: any): Promise<ServerInfoType> => {
-    return new Promise((resolve, reject) => {
-        // Используем socket.once для одноразового прослушивания события
-        showAlertInfo('1'+JSON.stringify(userInfo))
+export const checkUser = (userInfo: any, userData: any): Promise<ServerInfoType> => {
+    return new Promise((resolve, reject) => {       
         socket.emit('checkUser', { userInfo })
-
+        // Используем socket.once для одноразового прослушивания события
         socket.once('checkUserResponse', (response: any) => {
             if (!response || response.error) {
                 return reject(response ? response.error : 'Unknown error')
             }
-            showAlertInfo('2'+JSON.stringify(response))
             resolve(response)
         })
     })
 }
-
 
 export const startNewFoxGame = (userInfo: any): Promise<any> => {
     return new Promise((resolve, reject) => {
