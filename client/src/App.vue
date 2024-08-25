@@ -36,19 +36,16 @@
     import { ref, onMounted  } from 'vue'
     import { RouterView,  useRouter, useRoute } from 'vue-router'  
     import Head from './components/Head.vue'
-    import { useWebApp, useWebAppPopup } from 'vue-tg'
+    import { useWebApp } from 'vue-tg'
     import type {ServerInfoType} from '@/types/ServerInfoType'
     import FirstPageView from './views/FirstPageView.vue'
     import QrCode from './components/QrCodeBox.vue'
     import MainGameScreen from './views/MainGameScreen.vue'
     import Footer from './components/Footer.vue'
     import { checkUser } from './services/socketIOHandle'
-    import type { UserType } from './types/UserType'
 
     const router = useRouter()
     const route = useRoute()
-
-    const { showAlert } = useWebAppPopup()
 
     const routes = ['/', '/friends', '/booster', '/leaderboard', '/settings']
 
@@ -56,25 +53,10 @@
     const readyToShow = ref(false)
     const gameScreen = ref(0)
     
-    const { initDataUnsafe, initData } = useWebApp()
+    const { initDataUnsafe } = useWebApp()
     const isLoading = ref(false)
     const showQR = ref(false)
-   
-    console.log(999,initDataUnsafe, initData)
-    try{
-        showAlert(initData)
-    }catch(error){
-        console.log("No showAlert", initData)
-    }
-    
 
-    const userInfo = ref( initDataUnsafe.user ? initDataUnsafe.user : <UserType>{
-        id              : -1,
-        first_name      : 'Tester1',
-        username        : 'tester1',
-        language_code   : 'ru'
-    }
-)
     const serverInfo = ref<ServerInfoType|null>(null)
 
     const handleStartGame = () => {
@@ -121,6 +103,7 @@
         isLoading.value = true 
         try {
             const loadUserInfo = await checkUser( )
+            console.log("RESULT = ",loadUserInfo)
             return loadUserInfo
         } catch (error) {
             console.log("Error loadTelegramUserInfo:",error)
@@ -130,8 +113,8 @@
         }
     }
 
-    const checkIfParentIsTelegram = ()=>{
-        if ( userInfo.value?.language_code === undefined ) {
+    const checkIfParentIsTelegram = ()=>{       
+        if ( initDataUnsafe.user === undefined ) {
             showQR.value = true
             return false
         } else {
@@ -144,7 +127,7 @@
         //Убедиться, что запуск из telegram
         const checkTLG = checkIfParentIsTelegram()
         if (checkTLG){
-            serverInfo.value = await loadTelegramUserInfo( )           
+            serverInfo.value = await loadTelegramUserInfo( )
             startGame()
         }
     })

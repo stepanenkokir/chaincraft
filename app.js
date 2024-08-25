@@ -4,8 +4,7 @@ import { fileURLToPath } from 'url'
 import config from 'config'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { setUser } from './routes/routes.js'
-import { startIONewFoxGame, checkIOFoxResult, observeIOFoxGame, checkUser } from './routes/socketIOHandle.js'
+import { checkUser } from './routes/socketIOHandle.js'
 import { createAllDB } from './models/index.js'
 
 const app = express()
@@ -24,8 +23,6 @@ const PORT =  config.has('port')? config.get('port'): 50007
 
 app.use(express.static(path.join(__dirname, 'client', 'dist')))
 
-app.post('/setuser', setUser)
-
 // Socket.io обработчики
 io.on('connection', (socket) => {
     console.log('Новый клиент подключился:', socket.id)
@@ -33,13 +30,13 @@ io.on('connection', (socket) => {
     socket.on('checkUser', (userInfo) => checkUser(socket, userInfo))
 
     // Обработка события старта игры через Socket.io
-    socket.on('startNewFoxGame', startIONewFoxGame)
+   // socket.on('startNewFoxGame', startIONewFoxGame)
 
     // Обработка события проверки результата через Socket.io
-    socket.on('checkFoxResult', checkIOFoxResult) 
+   // socket.on('checkFoxResult', checkIOFoxResult) 
     
     // Обработка события наблюдения за игрой через Socket.io
-    socket.on('observeGame', observeIOFoxGame)
+  //  socket.on('observeGame', observeIOFoxGame)
 
     socket.on('disconnect', () => {
         console.log('Клиент отключился:', socket.id);

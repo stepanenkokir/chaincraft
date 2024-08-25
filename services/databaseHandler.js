@@ -21,28 +21,41 @@ export const findAllUsers = async ( initData ) =>{
     }
 }
 
-export const findUser = async ( initData ) =>{
+export const findOrCreateUser = async ( userInfo ) =>{
     try {
-        console.log("initData",initData)
+        console.log("initData",userInfo)
 
-        const user = await db.User.findOne({ 
+        // allows_write_to_pm : true
+        // first_name: "Kirill"
+        // id: 1120239873
+        // is_premium: true
+        // language_code: "ru"
+        // last_name: "Stepanenko"
+        // username: "stekiva"
+        const currentUserInfo = {
+            telegram_id     : userInfo.id,
+            language_code   : userInfo.language_code,
+            last_name       : userInfo.last_name,
+            first_name      : userInfo.first_name,
+            username        : userInfo.username,
+            token           : userInfo.hash,
+            balance         : 0,
+        }
+
+        const [user, created] = await db.User.findOrCreate({ 
             where: { 
-                telegram_id: initData.id 
-            } 
-        })
+                telegram_id: userInfo.id 
+            },
+            default : currentUserInfo
+        })                
     
-        // if (!user) {
-        //     user = await db.User.create({
-        //         telegram_id : initData.id,
-        //         username    : initData.username,
-        //         token
-        //     })
-        // }
-    
-        return true
+        if (created) {
+            console.log("Create new user ",userInfo.id, userInfo.username, userInfo.first_name, userInfo.last_name )
+        }
+        return user
     } catch (error) {
         console.log("Error findUser: ",error.message)
-        return false
+        return null
     }
 }
 

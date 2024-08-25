@@ -43,13 +43,25 @@ export const initializeSocketConnection = async () => {
 // Функция для загрузки информации о пользователе с сервера
 export const checkUser = (): Promise<ServerInfoType> => {
 
-    const { initDataUnsafe, initData } = useWebApp()
-
-    console.log(888, initDataUnsafe, initData)
+    const { initDataUnsafe, initData } = useWebApp()  
     return new Promise((resolve, reject) => {       
         socket.emit('checkUser', { userInfo: initDataUnsafe?.user, initData:initData })
         // Используем socket.once для одноразового прослушивания события
         socket.once('checkUserResponse', (response: any) => {
+            if (!response || response.error) {
+                return reject(response ? response.error : 'Unknown error')
+            }
+            resolve(response)
+        })
+
+        socket.once('invalidToken', (response: any) => {
+            if (!response || response.error) {
+                return reject(response ? response.error : 'Unknown error')
+            }
+            resolve(response)
+        })
+
+        socket.once('unknownUser', (response: any) => {
             if (!response || response.error) {
                 return reject(response ? response.error : 'Unknown error')
             }
