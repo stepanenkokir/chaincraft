@@ -47,9 +47,8 @@ export const observeIOFoxGame = async (data) => {
 
 export const checkUser = async (socket, data ) => {
     console.log(data.userInfo, data.initData )
-
-
     const valid = verifyTelegramData(data.initData)
+    console.log('valid = ', valid)
     socket.emit('checkUserResponse', {
         user_id: 112,
         lang:'ru',
@@ -62,17 +61,24 @@ export const checkUser = async (socket, data ) => {
 const verifyTelegramData = (initData)=> {
     try{
         const botToken = config.get('botToken')
-        const secret = crypto.createHash('sha256').update(botToken).digest();
+        const secret = crypto.createHash('sha256').update(botToken).digest()
+
+        console.log("Secret", secret)
         const dataCheckString = Object.keys(initData)
             .filter(key => key !== 'hash')
             .map(key => `${key}=${initData[key]}`)
             .sort()
             .join('\n')
     
+        
+        console.log("dataCheckString", dataCheckString)
+        
         const hmac = crypto.createHmac('sha256', secret)
             .update(dataCheckString)
             .digest('hex')
-    
+        
+        console.log("hmac", hmac)
+        
         return hmac === initData.hash
     }catch(error){
         console.log("Error verifyTelegramData: ", error.message)
