@@ -6,13 +6,14 @@ interface Messages {
 
 const messages: Messages = {
   en: {
-    welcomeMessage: 'Welcome',
-    welcomeBackMessage: 'Welcome back',
-    
+    welcomeMessage  : 'Hi',
+    unknownName     : 'Stranger',
+    yourBallance    : 'Your balance',
   },
   ru: {
-    welcomeMessage: 'Добро пожаловать',
-    welcomeBackMessage: 'С возвращением',
+    welcomeMessage  : 'Привет',
+    unknownName     : 'Незнакомец',
+    yourBallance    : 'Ваш баланс',
     
   },
 }

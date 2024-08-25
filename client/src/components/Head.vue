@@ -1,30 +1,23 @@
 <template>
     <div class="greetings">
-        <h1 class="great green"> {{ greetings }}, {{ props.name }} </h1> 
+        <h1 class="great green"> {{ greetings }} </h1> 
     </div>
 </template>
 
 <script setup lang="ts">
     import { useI18n } from 'vue-i18n'
+    import type {ServerInfoType} from '@/types/ServerInfoType'
 
     const props = defineProps({
-        lang: {
-            type: String,
+        serverInfo: {
+            type:  Object as () => ServerInfoType | null,
             required: true,
-        },
-        name: {
-            type: String,
-            required: true,
-        },
-        info: {
-            type: String,
-            required: false,
         },
     })
     const { t, locale } = useI18n()
-    locale.value =  props.lang || 'en'
+    locale.value = props.serverInfo ? props.serverInfo.lang : 'en'
 
-    const greetings = props.info ? t('welcomeMessage') : t('welcomeBackMessage')
+    const greetings = props.serverInfo ? `${t('welcomeMessage')}, ${props.serverInfo.user_name}` :  `${t('welcomeMessage')}, ${t('unknownName')}`
 </script>
 
 <style scoped>
@@ -39,7 +32,7 @@
 
 .great {
     display: inline-block;
-    font-size: 8vw; /* Динамическое изменение размера шрифта */
+    font-size: 6vw; /* Динамическое изменение размера шрифта */
     overflow: hidden;
     text-overflow: ellipsis; /* Добавляет троеточие, если текст выходит за пределы блока */
     white-space: nowrap; /* Предотвращает перенос текста */

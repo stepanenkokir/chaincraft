@@ -44,12 +44,14 @@ export const initializeSocketConnection = async () => {
 export const checkUser = (userInfo: any): Promise<ServerInfoType> => {
     return new Promise((resolve, reject) => {
         // Используем socket.once для одноразового прослушивания события
+        showAlertInfo('1'+JSON.stringify(userInfo))
         socket.emit('checkUser', { userInfo })
 
         socket.once('checkUserResponse', (response: any) => {
             if (!response || response.error) {
                 return reject(response ? response.error : 'Unknown error')
             }
+            showAlertInfo('2'+JSON.stringify(response))
             resolve(response)
         })
     })

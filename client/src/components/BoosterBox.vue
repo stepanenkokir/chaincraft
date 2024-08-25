@@ -24,8 +24,8 @@
 
     const props = defineProps({
         data:{
-            type:Object as () => BoosterBoxType,
-            required: true
+            type        : Object as () => BoosterBoxType,
+            required    : true
         }
     })
 

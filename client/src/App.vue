@@ -12,7 +12,7 @@
         </div>
         <div  v-touch:swipe.left="onSwipeLeft" v-touch:swipe.right="onSwipeRight"  class="page-container" v-if="readyToShow">
             <header>            
-                <Head :name="name" :lang="lang" />
+                <Head :serverInfo="serverInfo" />
             </header>
             
             <main class="content">
@@ -60,30 +60,15 @@
     const isLoading = ref(false)
     const showQR = ref(false)
    
-    const lang = ref('en')
-    const name = ref('user')
-
     const userInfo = ref( initDataUnsafe.user ? initDataUnsafe.user : <UserType>{
-        id              : 1,
-        first_name      : 'Tester',
-        username        : 'tester',
-        language_code   : 'en'
+        id              : -1,
+        first_name      : 'Tester1',
+        username        : 'tester1',
+        language_code   : 'ru'
     }
 )
     const serverInfo = ref<ServerInfoType|null>(null)
 
-    const checkIfParentIsTelegram = ()=>{
-        if ( userInfo.value?.language_code === undefined ) {
-            showQR.value = true
-            return false
-        } else {
-            showQR.value = false
-            lang.value = userInfo.value?.language_code || "en"
-            name.value = `${userInfo.value?.first_name?userInfo.value.first_name:userInfo.value.username}` || "User"  
-            return true 
-        }
-    }
-    
     const handleStartGame = () => {
         tutorialPage.value = false
         readyToShow.value = true  
@@ -97,19 +82,6 @@
             tutorialPage.value = true
             readyToShow.value = false 
             gameScreen.value = 0 
-        }
-    }
-
-    const loadTelegramUserInfo = async ( ) =>{
-        isLoading.value = true 
-        try {
-            const loadUserInfo = await checkUser( userInfo.value )
-            return loadUserInfo
-        } catch (error) {
-            console.log("Error loadTelegramUserInfo:",error)
-            return null
-        }finally{
-            isLoading.value = false         
         }
     }
 
@@ -137,7 +109,29 @@
         router.push({ path: prevRoute() })
     }
 
+    const loadTelegramUserInfo = async ( ) =>{
+        isLoading.value = true 
+        try {
+            const loadUserInfo = await checkUser( userInfo.value )
+            return loadUserInfo
+        } catch (error) {
+            console.log("Error loadTelegramUserInfo:",error)
+            return null
+        }finally{
+            isLoading.value = false         
+        }
+    }
 
+    const checkIfParentIsTelegram = ()=>{
+        if ( userInfo.value?.language_code === undefined ) {
+            showQR.value = true
+            return false
+        } else {
+            showQR.value = false
+            return true 
+        }
+    }
+    
     onMounted(async()=>{
         //Убедиться, что запуск из telegram
         const checkTLG = checkIfParentIsTelegram()
