@@ -58,7 +58,7 @@ export const checkUser = async (socket, data ) => {
 }
 
 // Вспомогательная функция для проверки данных Telegram
-const verifyTelegramData = (initData)=> {
+const verifyTelegramDataOld = (initData)=> {
     try{
         const botToken = config.get('botToken')
         const secret = crypto.createHash('sha256').update(botToken).digest()
@@ -85,3 +85,38 @@ const verifyTelegramData = (initData)=> {
         return false
     }
 }
+
+const verifyTelegramData = (initData) => {
+    try {
+        const botToken = config.get('botToken');
+        
+        console.log(0,initData)
+        
+        // Step 1: Generate the secret key
+        const secretKey = crypto.createHmac('sha256', 'WebAppData')
+            .update(botToken)
+            .digest();
+        
+            console.log(1, secretKey)
+        // Step 2: Create the dataCheckString
+        const dataCheckString = Object.keys(initData)
+            .filter(key => key !== 'hash') // Exclude the hash field
+            .sort() // Sort keys alphabetically
+            .map(key => `${key}=${initData[key]}`) // Create key=value pairs
+            .join('\n'); // Join pairs with newline separator
+
+        // Step 3: Compute the HMAC hash
+        const hmac = crypto.createHmac('sha256', secretKey)
+            .update(dataCheckString)
+            .digest('hex');
+
+            console.log(2, hmac)
+            console.log(3, initData.hash)
+        // Step 4: Compare computed HMAC with the received hash
+        return hmac === initData.hash;
+
+    } catch (error) {
+        console.log("Error verifyTelegramData: ", error.message);
+        return false;
+    }
+};
