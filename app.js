@@ -30,7 +30,7 @@ app.post('/setuser', setUser)
 io.on('connection', (socket) => {
     console.log('Новый клиент подключился:', socket.id)
 
-    socket.on('checkUser', checkUser)
+    socket.on('checkUser', (userInfo) => checkUser(socket, userInfo))
 
     // Обработка события старта игры через Socket.io
     socket.on('startNewFoxGame', startIONewFoxGame)

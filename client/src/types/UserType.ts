@@ -1,6 +1,6 @@
 export type UserType = {
-    id          : number,
-    first_name  : string,
-    login       : string,
-    lang        : string
+    id              : number,
+    first_name      : string,
+    username        : string,
+    language_code   : string
 }

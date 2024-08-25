@@ -42,8 +42,8 @@ export const observeIOFoxGame = async (data) => {
     socket.emit('gameData', { foxArr: game.foxArr, start_time: game.start_time });
 }
 
-export const checkUser = async ( userInfo ) => {
-    socket.emit('userInfo', {
+export const checkUser = async (socket, userInfo ) => {
+    socket.emit('checkUserResponse', {
         user_id: 112,
         user_name: JSON.stringify(userInfo), 
         balance: 9876,

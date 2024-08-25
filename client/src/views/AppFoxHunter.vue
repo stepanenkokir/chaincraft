@@ -55,7 +55,7 @@ const grid = reactive<GridCell[]>([])
 const gameWon = ref(false)
 const clicks = ref(0)
 const findedFox = ref(0)
-const timer = ref<number | null>(null);
+const timerFoxGame = ref< number | null>(null);
 const gameTime = ref(0)
 const firstClick = ref(true)
 
@@ -69,7 +69,9 @@ const startGame = async () => {
     gameWon.value = false
     clicks.value = 0
     findedFox.value = 0
-    clearInterval(timer.value as number | undefined)
+    if (timerFoxGame.value !== null) {
+        clearInterval(timerFoxGame.value);
+    }    
     gameTime.value =0
     firstClick.value=true
 
@@ -94,7 +96,7 @@ const handleClick = async ( index: number ) => {
     } 
 
     if ( firstClick.value ){
-        timer.value = setInterval( () => {
+        timerFoxGame.value = setInterval( () => {
             gameTime.value += 1
         }, 1000 )
         firstClick.value = false
@@ -116,8 +118,8 @@ const handleClick = async ( index: number ) => {
     }
     
     if (findedFox.value === 5) {
-        if (timer.value !== null) {
-            clearInterval(timer.value);
+        if (timerFoxGame.value !== null) {
+            clearInterval(timerFoxGame.value);
         }
         gameWon.value = true;
     }
