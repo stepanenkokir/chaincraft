@@ -111,9 +111,9 @@ const verifyTelegramData = (initData) => {
             .digest('hex')
 
             console.log(2, hmac)
-            console.log(3, initData.hash)
+            console.log(3, hash)
         // Step 4: Compare computed HMAC with the received hash
-        return hmac === initData.hash;
+        return hmac === hash;
 
     } catch (error) {
         console.log("Error verifyTelegramData: ", error.message);
