@@ -6,7 +6,7 @@ const { showAlert } = useWebAppPopup()
 
 const showAlertInfo = ( message: string) =>{
     console.log(message)
-   // showAlert(message)
+    showAlert(message)
 }
 
 // URL сервера Socket.IO, возможно, нужно настроить в зависимости от вашего окружения
