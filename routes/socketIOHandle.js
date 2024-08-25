@@ -90,7 +90,7 @@ const verifyTelegramData = (initData) => {
             .update(dataCheckString)
             .digest('hex')
 
-        const currUser = JSON.parse(params.get(user))
+        const currUser = JSON.parse(params.get('user'))
         currUser.token = hash
 
         // Step 4: Compare computed HMAC with the received hash
