@@ -36,6 +36,15 @@
   --section-gap: 160px;
 }
 
+/* Define the default cell FoxHunter size */
+:root {
+  --grid-fox-width: 95vw;
+  --grid-fox-columns: 10;
+  --gap-fox-size: 1px;
+  --cell-fox-size: calc((var(--grid-fox-width) - (var(--grid-fox-columns) - 1) * var(--gap-fox-size)) / var(--grid-fox-columns));
+}
+
+
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--tg-theme-bg-color);
@@ -56,6 +65,15 @@
   box-sizing: border-box;
   margin: 0;
   font-weight: normal;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(to bottom, #80d3ff, #bddbff);
 }
 
 body {

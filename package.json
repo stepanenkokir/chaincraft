@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "npm run build --prefix client",
+    "build-aws": "npm run build-aws --prefix client",
     "client": "npm run dev --prefix client"
   },
   "keywords": [],
@@ -17,6 +18,9 @@
   },
   "dependencies": {
     "config": "^3.3.12",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "mysql2": "^3.11.0",
+    "sequelize": "^6.37.3",
+    "socket.io": "^4.7.5"
   }
 }

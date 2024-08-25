@@ -1,6 +1,6 @@
 <template>
     <div class="greetings">
-        <h1 class="green"> {{ greetings }}, {{ props.name }} </h1> 
+        <h1 class="great green"> {{ greetings }}, {{ props.name }} </h1> 
     </div>
 </template>
 
@@ -28,15 +28,22 @@
 </script>
 
 <style scoped>
-h1 {
-    font-weight: 800;
-    font-size: 2rem;
-    position: relative;
-    top: -10px;
+
+.greetings {
+    width: 90vw;
+    white-space: nowrap;
+    text-align: center;
+    overflow-x: auto; /* Добавляет горизонтальный скролл */
+    font-weight: bold;
 }
 
-.greetings{
-    text-align: center;
+.great {
+    display: inline-block;
+    font-size: 8vw; /* Динамическое изменение размера шрифта */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Добавляет троеточие, если текст выходит за пределы блока */
+    white-space: nowrap; /* Предотвращает перенос текста */
+    font-weight: 800;
 }
 
 </style>

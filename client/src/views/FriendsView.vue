@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue'
     import FriendsListBox from '@/components/FriendsListBox.vue'
     import type { FriendsListType } from '@/types/FriendsListType'
 
@@ -29,6 +28,5 @@
             score: 1,
             status: "online"
         },
-       
     ]
 </script>

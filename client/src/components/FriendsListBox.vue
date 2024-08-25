@@ -29,7 +29,7 @@
 </template>
   
 <script setup lang="ts">
-import type { FriendsListType } from '@/types/FriendsListType';
+import type { FriendsListType } from '@/types/FriendsListType'
 
 const props = defineProps<{
     list: FriendsListType[]
