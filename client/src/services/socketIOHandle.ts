@@ -14,7 +14,7 @@ const showAlertInfo = ( message: string) =>{
 }
 
 // URL сервера Socket.IO, возможно, нужно настроить в зависимости от вашего окружения
-const SERVER_URL = 'http://localhost:50010'
+const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
 let socket: any;
 
