@@ -90,25 +90,25 @@ const verifyTelegramData = (initData) => {
     try {
         const botToken = config.get('botToken');
         
-        console.log(0,initData)
-        
+        const params = new URLSearchParams(initData);
+        const hash = params.get('hash')
+        params.delete('hash')
+    
+        // Сортировка ключей в алфавитном порядке и создание строки data-check-string
+        const sortedParams = Array.from(params.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+        const dataCheckString = sortedParams.map(([key, value]) => `${key}=${value}`).join('\n');
+        console.log(sortedParams)
+        console.log(dataCheckString)
+
         // Step 1: Generate the secret key
         const secretKey = crypto.createHmac('sha256', 'WebAppData')
             .update(botToken)
-            .digest();
-        
-            console.log(1, secretKey)
-        // Step 2: Create the dataCheckString
-        const dataCheckString = Object.keys(initData)
-            .filter(key => key !== 'hash') // Exclude the hash field
-            .sort() // Sort keys alphabetically
-            .map(key => `${key}=${initData[key]}`) // Create key=value pairs
-            .join('\n'); // Join pairs with newline separator
+            .digest()
 
         // Step 3: Compute the HMAC hash
         const hmac = crypto.createHmac('sha256', secretKey)
             .update(dataCheckString)
-            .digest('hex');
+            .digest('hex')
 
             console.log(2, hmac)
             console.log(3, initData.hash)
