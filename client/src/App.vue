@@ -36,7 +36,7 @@
     import { ref, onMounted  } from 'vue'
     import { RouterView,  useRouter, useRoute } from 'vue-router'  
     import Head from './components/Head.vue'
-    import { useWebApp } from 'vue-tg'
+    import { useWebApp, useWebAppPopup } from 'vue-tg'
     import type {ServerInfoType} from '@/types/ServerInfoType'
     import FirstPageView from './views/FirstPageView.vue'
     import QrCode from './components/QrCodeBox.vue'
@@ -48,7 +48,7 @@
     const router = useRouter()
     const route = useRoute()
 
-    const socket = ref(null)
+    const { showAlert } = useWebAppPopup()
 
     const routes = ['/', '/friends', '/booster', '/leaderboard', '/settings']
 
@@ -61,7 +61,13 @@
     const showQR = ref(false)
    
     console.log(999,initDataUnsafe, initData)
+    try{
+        showAlert(initData)
+    }catch(error){
+        console.log("No showAlert", initData)
+    }
     
+
     const userInfo = ref( initDataUnsafe.user ? initDataUnsafe.user : <UserType>{
         id              : -1,
         first_name      : 'Tester1',
