@@ -5,12 +5,16 @@ import type { ServerInfoType } from '@/types/ServerInfoType'
 const { showAlert } = useWebAppPopup()
 
 const showAlertInfo = ( message: string) =>{
-    console.log(message)
-    showAlert(message)
+    try{
+        console.log(message)
+        showAlert(message)
+    }catch(error){
+        console.log("Error showAlertInfo:",error)
+    }
 }
 
 // URL сервера Socket.IO, возможно, нужно настроить в зависимости от вашего окружения
-const SERVER_URL = 'http://localhost:50010';
+const SERVER_URL = 'http://localhost:50010'
 
 let socket: any;
 
@@ -26,42 +30,29 @@ export const initializeSocketConnection = async () => {
     })
 
     socket.on('disconnect', () => {
-        showAlertInfo('Disconnected from the server');
+        showAlertInfo('Disconnected from the server')
     })
 
     socket.on('connect_error', (err: any) => {
-        showAlertInfo(`Connection error: ${JSON.stringify(err)}`);
+        showAlertInfo(`Connection error: ${JSON.stringify(err)}`)
     })
 
     return socket
 }
 
-// // Функция для загрузки информации о пользователе с сервера
-// export const checkUser = (userInfo: any): Promise<ServerInfoType> => {
-//     return new Promise((resolve, reject) => {
-//         socket.emit('checkUser', { userInfo }, (response: any) => {
-//             if (response.error) {
-//                 return reject(response.error);
-//             }
-//             resolve(response.data);
-//         });
-//     });
-// };
-
-
 // Функция для загрузки информации о пользователе с сервера
 export const checkUser = (userInfo: any): Promise<ServerInfoType> => {
     return new Promise((resolve, reject) => {
         // Используем socket.once для одноразового прослушивания события
-        socket.emit('checkUser', { userInfo });
+        socket.emit('checkUser', { userInfo })
 
         socket.once('checkUserResponse', (response: any) => {
             if (!response || response.error) {
-                return reject(response ? response.error : 'Unknown error');
+                return reject(response ? response.error : 'Unknown error')
             }
-            resolve(response);
-        });
-    });
+            resolve(response)
+        })
+    })
 }
 
 

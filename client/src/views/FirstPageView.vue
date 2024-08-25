@@ -2,7 +2,7 @@
     <div class="welcome-container">
       <h1>Welcome to the ChainCraft</h1>
       <p>
-        Welcome, {{ user.first_name }}! Get ready to dive into the world of ChainCraft.
+        Welcome, {{ props.user.first_name }}! Get ready to dive into the world of ChainCraft.
         Explore, build, and conquer. Ready to start your adventure?
       </p>
       <p>
@@ -13,12 +13,18 @@
 </template>
   
 <script setup lang="ts">
-    import { MainButton, useWebApp } from 'vue-tg'
+    import { MainButton } from 'vue-tg'
+    import type { UserType } from '../types/UserType'
 
-    const { initDataUnsafe } = useWebApp()
-    const emit = defineEmits(['start-game'])
+    const props = defineProps({
+        user:{
+            type      : Object as () => UserType,
+            required  : true
+        }
+    })
   
-    const user = initDataUnsafe.user
+    const emit = defineEmits(['start-game'])
+     
   
     const startGame = () => {
         emit('start-game')

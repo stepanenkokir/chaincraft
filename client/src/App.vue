@@ -2,7 +2,7 @@
     <div>
         <div v-if="tutorialPage">           
             <main class="content">
-                <FirstPageView  @start-game="handleStartGame" />
+                <FirstPageView :user="userInfo" @start-game="handleStartGame" />
             </main> 
         </div>
         <div v-if="gameScreen>0">           
@@ -42,7 +42,7 @@
     import QrCode from './components/QrCodeBox.vue'
     import MainGameScreen from './views/MainGameScreen.vue'
     import Footer from './components/Footer.vue'
-    import { checkUser, initializeSocketConnection } from './services/socketIOHandle'
+    import { checkUser } from './services/socketIOHandle'
     import type { UserType } from './types/UserType'
 
     const router = useRouter()
@@ -62,6 +62,7 @@
    
     const lang = ref('en')
     const name = ref('user')
+
     const userInfo = ref( initDataUnsafe.user ? initDataUnsafe.user : <UserType>{
         id              : 1,
         first_name      : 'Tester',
@@ -89,7 +90,7 @@
         gameScreen.value = 0  
     }
 
-    const startGame = ( ) =>{       
+    const startGame = ( ) =>{
         if (serverInfo.value){
             handleStartGame()
         } else {          
@@ -100,10 +101,16 @@
     }
 
     const loadTelegramUserInfo = async ( ) =>{
-        isLoading.value = true       
-        const loadUserInfo = await checkUser( userInfo.value )
-        isLoading.value = false
-        return loadUserInfo
+        isLoading.value = true 
+        try {
+            const loadUserInfo = await checkUser( userInfo.value )
+            return loadUserInfo
+        } catch (error) {
+            console.log("Error loadTelegramUserInfo:",error)
+            return null
+        }finally{
+            isLoading.value = false         
+        }
     }
 
     const selectGame = (game: number = 0) =>{        
@@ -135,7 +142,7 @@
         //Убедиться, что запуск из telegram
         const checkTLG = checkIfParentIsTelegram()
         if (checkTLG){
-            serverInfo.value = await loadTelegramUserInfo( )
+            serverInfo.value = await loadTelegramUserInfo( )           
             startGame()
         }
     })
