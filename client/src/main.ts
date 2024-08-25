@@ -11,8 +11,6 @@ import Vue3TouchEvents, {
     type Vue3TouchEventsOptions,
   } from "vue3-touch-events";
   
-  
-
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(router)

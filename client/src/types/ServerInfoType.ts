@@ -1,4 +1,5 @@
 export type ServerInfoType = {
-    id_user: number,
-    score:number,
+    user_id: number,
+    user_name: string, 
+    balance: number,
 }

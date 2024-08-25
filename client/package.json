@@ -17,6 +17,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "pinia": "^2.2.2",
     "qrcode.vue": "^3.4.1",
+    "socket.io-client": "^4.7.5",
     "vue": "^3.4.29",
     "vue-i18n": "^9.14.0",
     "vue-router": "^4.4.3",

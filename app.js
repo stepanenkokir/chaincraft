@@ -5,7 +5,8 @@ import config from 'config'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { setUser } from './routes/routes.js'
-import { startIONewFoxGame, checkIOFoxResult, observeIOFoxGame } from './routes/socketIOHandle.js'
+import { startIONewFoxGame, checkIOFoxResult, observeIOFoxGame, checkUser } from './routes/socketIOHandle.js'
+import { createAllDB } from './models/index.js'
 
 const app = express()
 const httpServer = createServer(app)
@@ -27,13 +28,15 @@ app.post('/setuser', setUser)
 
 // Socket.io обработчики
 io.on('connection', (socket) => {
-    console.log('Новый клиент подключился:', socket.id);
+    console.log('Новый клиент подключился:', socket.id)
+
+    socket.on('checkUser', checkUser)
 
     // Обработка события старта игры через Socket.io
-    socket.on('startGame', startIONewFoxGame)
+    socket.on('startNewFoxGame', startIONewFoxGame)
 
     // Обработка события проверки результата через Socket.io
-    socket.on('checkResult', checkIOFoxResult) 
+    socket.on('checkFoxResult', checkIOFoxResult) 
     
     // Обработка события наблюдения за игрой через Socket.io
     socket.on('observeGame', observeIOFoxGame)
@@ -48,6 +51,7 @@ httpServer.listen(config.port, () => {
     console.log(`Сервер запущен на порту ${config.port}`)
 })
 
-// app.listen(PORT, () => {
-//     console.log(`Server is running on http://localhost:${PORT}`)
-// })
+const createDB = config.has('createDB') ? config.get('createDB') : false
+if (createDB){
+    await createAllDB()
+}

@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
     import { ref, onMounted  } from 'vue'
-    import { RouterLink, RouterView,  useRouter, useRoute } from 'vue-router'  
+    import { RouterView,  useRouter, useRoute } from 'vue-router'  
     import Head from './components/Head.vue'
     import { useWebApp } from 'vue-tg'
     import type {ServerInfoType} from '@/types/ServerInfoType'
@@ -42,6 +42,7 @@
     import QrCode from './components/QrCodeBox.vue'
     import MainGameScreen from './views/MainGameScreen.vue'
     import Footer from './components/Footer.vue'
+    import { checkUser } from './services/socketIOHandle'
 
     const router = useRouter()
     const route = useRoute()
@@ -64,10 +65,12 @@
     const checkIfParentIsTelegram = ()=>{
         if ( userInfo.value?.language_code === undefined ) {
             showQR.value = true
+            return false
         } else {
             showQR.value = false
             lang.value = userInfo.value?.language_code || "en"
-            name.value = `${userInfo.value?.first_name?userInfo.value.first_name:userInfo.value.username}` || "User"   
+            name.value = `${userInfo.value?.first_name?userInfo.value.first_name:userInfo.value.username}` || "User"  
+            return true 
         }
     }
     
@@ -90,13 +93,15 @@
     const loadTelegramUserInfo = async ( id:number) =>{
         isLoading.value = true       
         await new Promise(resolve =>setTimeout(resolve,1000))
+        const loadUserInfo = await checkUser( userInfo )
         
         isLoading.value = false
-        const rr:ServerInfoType = {
-            id_user:1,
-            score:1000
-        }
-        return null
+        // const rr:ServerInfoType = {
+        //     user_id: 1,
+        //     user_name: 'TestUser',
+        //     balance: 1000
+        // }
+        return loadUserInfo
     }
 
     const selectGame = (game: number = 0) =>{        
@@ -125,9 +130,12 @@
 
 
     onMounted(async()=>{
-        checkIfParentIsTelegram()
-        serverInfo.value = await loadTelegramUserInfo( userInfo.value.id )
-        startGame()
+        //Убедиться, что запуск из telegram
+        const checkTLG = checkIfParentIsTelegram()
+        if (checkTLG){
+            serverInfo.value = await loadTelegramUserInfo( userInfo.value.id )
+            startGame()
+        }
     })
 </script>
 
