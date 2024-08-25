@@ -90,6 +90,8 @@ const verifyTelegramData = (initData) => {
             .update(dataCheckString)
             .digest('hex')
 
+            console.log(params)
+            console.log(params.get('user'))
         const currUser = JSON.parse(params.get('user'))
         currUser.token = hash
 
