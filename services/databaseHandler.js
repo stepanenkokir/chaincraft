@@ -31,8 +31,6 @@ export const findOrCreateUser = async ( userInfo ) =>{
             username        : userInfo.username,
             token           : userInfo.token,
             balance         : 0,
-            created_at      : new Date(),
-            updated_at      : new Date(),
         }
 
         console.log("currentUserInfo",currentUserInfo)
