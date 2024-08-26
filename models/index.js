@@ -30,21 +30,43 @@ db.Sequelize = Sequelize
 const modelsDirectory = path.join(__dirname, 'models')
 
 // Load all model files
+// const loadModels = async () => {
+//     const files = fs.readdirSync(modelsDirectory)
+   
+//     for (const file of files) {
+//         const modelPath = path.join(modelsDirectory, file)
+//         const model = (await import(modelPath)).default(sequelize, Sequelize.DataTypes)
+//        // console.log(model, model.name, modelPath)
+//         db[model.name] = model
+//     }
+
+//     // Optional: If you have associations, initialize them here
+//     Object.keys(db).forEach((modelName) => {
+//        // console.log(modelName)
+//         if (db[modelName].associate) {
+//             db[modelName].associate(db);
+//         }
+//     })
+// }
+
+// Load all model files
 const loadModels = async () => {
     const files = fs.readdirSync(modelsDirectory)
    
     for (const file of files) {
         const modelPath = path.join(modelsDirectory, file)
-        const model = (await import(modelPath)).default(sequelize, Sequelize.DataTypes)
-        db[model.name] = model
+        const module = await import(modelPath)
+        const model = module.default(sequelize, Sequelize.DataTypes)
+        const modelName = model.name.charAt(0).toUpperCase() + model.name.slice(1)
+        db[modelName] = model
     }
 
-    // // Optional: If you have associations, initialize them here
+    // This part is needed only if you have associations defined between models
     // Object.keys(db).forEach((modelName) => {
     //     if (db[modelName].associate) {
     //         db[modelName].associate(db);
     //     }
-    // });
+    // })
 }
 
 await loadModels()

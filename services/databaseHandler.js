@@ -42,6 +42,9 @@ export const findOrCreateUser = async ( userInfo ) =>{
             balance         : 0,
         }
 
+        console.log(0,db.user)
+        console.log(1,db.fox_game_result)
+
         const [user, created] = await db.User.findOrCreate({ 
             where: { 
                 telegram_id: userInfo.id 

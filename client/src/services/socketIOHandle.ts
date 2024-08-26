@@ -43,9 +43,11 @@ export const initializeSocketConnection = async () => {
 // Функция для загрузки информации о пользователе с сервера
 export const checkUser = (): Promise<ServerInfoType> => {
 
-    const { initDataUnsafe, initData } = useWebApp()  
+    const { initData } = useWebApp()
+
+    const initDataStr = initData&&initData.length>1 ? initData : "query_id=AAEBgcVCAAAAAAGBxUJDNiGU&user=%7B%22id%22%3A1120239873%2C%22first_name%22%3A%22Kirill%22%2C%22last_name%22%3A%22Stepanenko%22%2C%22username%22%3A%22stekiva%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1724630102&hash=d58be3e5effcf2b829d38a7efafc878aa4397a4adac583590399e79c1aef2582"
     return new Promise((resolve, reject) => {       
-        socket.emit('checkUser', { userInfo: initDataUnsafe?.user, initData:initData })
+        socket.emit('checkUser', { initData:initDataStr })
         // Используем socket.once для одноразового прослушивания события
         socket.once('checkUserResponse', (response: any) => {
             if (!response || response.error) {

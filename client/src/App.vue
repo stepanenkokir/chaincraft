@@ -125,7 +125,7 @@
     
     onMounted(async()=>{
         //Убедиться, что запуск из telegram
-        const checkTLG = checkIfParentIsTelegram()
+        const checkTLG = true;// checkIfParentIsTelegram()
         if (checkTLG){
             serverInfo.value = await loadTelegramUserInfo( )
             startGame()
