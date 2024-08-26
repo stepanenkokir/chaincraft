@@ -23,15 +23,6 @@ export const findAllUsers = async ( initData ) =>{
 
 export const findOrCreateUser = async ( userInfo ) =>{
     try {
-        console.log("initData",userInfo)
-
-        // allows_write_to_pm : true
-        // first_name: "Kirill"
-        // id: 1120239873
-        // is_premium: true
-        // language_code: "ru"
-        // last_name: "Stepanenko"
-        // username: "stekiva"
         const currentUserInfo = {
             telegram_id     : userInfo.id,
             language_code   : userInfo.language_code,
@@ -50,7 +41,7 @@ export const findOrCreateUser = async ( userInfo ) =>{
             where: { 
                 telegram_id: userInfo.id 
             },
-            default : currentUserInfo
+            defaults : currentUserInfo
         })                
     
         if (created) {
