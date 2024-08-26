@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 
 export default (sequelize) => {
-    const User = sequelize.define('user', {
+    const Users = sequelize.define('users', {
         user_id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -20,5 +20,5 @@ export default (sequelize) => {
         underscored: true, 
     })
 
-    return User
+    return Users
 }
