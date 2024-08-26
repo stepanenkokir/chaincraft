@@ -33,8 +33,6 @@ export const findOrCreateUser = async ( userInfo ) =>{
             balance         : 0,
         }
 
-        console.log("currentUserInfo",currentUserInfo)
-
         const [user, created] = await db.Users.findOrCreate({ 
             where: { 
                 telegram_id: userInfo.id 
@@ -44,6 +42,10 @@ export const findOrCreateUser = async ( userInfo ) =>{
     
         if (created) {
             console.log("Create new user ",user.id, user.username, user.first_name, user.last_name )
+        } else {
+            await user.update({
+                token : userInfo.token
+            })
         }
         return user
     } catch (error) {
