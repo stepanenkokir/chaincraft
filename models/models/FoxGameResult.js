@@ -10,7 +10,10 @@ export default (sequelize) => {
         best_time_count: DataTypes.INTEGER,
         best_time_time: DataTypes.INTEGER,
         total_score: DataTypes.INTEGER,        
-    }, { timestamps: true })
+    }, { 
+        timestamps: true,
+        underscored: true, 
+     })
 
     return FoxGameResult
 }

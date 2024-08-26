@@ -15,7 +15,10 @@ export default (sequelize) => {
         username        : DataTypes.STRING,
         token           : DataTypes.STRING,
         balance         : DataTypes.INTEGER,
-    }, { timestamps: true })
+    }, { 
+        timestamps: true,
+        underscored: true, 
+    })
 
     return User
 }

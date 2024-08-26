@@ -40,10 +40,11 @@ export const findOrCreateUser = async ( userInfo ) =>{
             username        : userInfo.username,
             token           : userInfo.token,
             balance         : 0,
+            created_at      : new Date(),
+            updated_at      : new Date(),
         }
 
-        console.log(0,db.user)
-        console.log(1,db.fox_game_result)
+        console.log("currentUserInfo",currentUserInfo)
 
         const [user, created] = await db.User.findOrCreate({ 
             where: { 

@@ -15,7 +15,10 @@ export default (sequelize) => {
         end_time: DataTypes.DATE,
         count_result: DataTypes.STRING,
         score: DataTypes.INTEGER,
-    }, { timestamps: true })
+    }, { 
+        timestamps: true,
+        underscored: true, 
+     })
 
     return FoxGame
 }

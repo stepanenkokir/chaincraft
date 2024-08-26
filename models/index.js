@@ -11,6 +11,8 @@ const dbConfig = config.get('dbConfig')
 const db = {}
 
 console.log("Connect to DB", dbConfig.HOST)
+const logLevel = false
+//const logLevel = console.log
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
@@ -21,33 +23,13 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
         acquire: dbConfig.pool.acquire,
         idle: dbConfig.pool.idle,
     },
+    logging: logLevel,
 })
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 
-// Path to the directory containing your model files
 const modelsDirectory = path.join(__dirname, 'models')
-
-// Load all model files
-// const loadModels = async () => {
-//     const files = fs.readdirSync(modelsDirectory)
-   
-//     for (const file of files) {
-//         const modelPath = path.join(modelsDirectory, file)
-//         const model = (await import(modelPath)).default(sequelize, Sequelize.DataTypes)
-//        // console.log(model, model.name, modelPath)
-//         db[model.name] = model
-//     }
-
-//     // Optional: If you have associations, initialize them here
-//     Object.keys(db).forEach((modelName) => {
-//        // console.log(modelName)
-//         if (db[modelName].associate) {
-//             db[modelName].associate(db);
-//         }
-//     })
-// }
 
 // Load all model files
 const loadModels = async () => {

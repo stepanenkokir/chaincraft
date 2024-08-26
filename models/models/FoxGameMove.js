@@ -14,7 +14,10 @@ export default (sequelize) => {
         click_time: DataTypes.DATE,
         click_field_index: DataTypes.INTEGER,
         click_field_result: DataTypes.STRING,
-    }, { timestamps: true })
+    }, { 
+        timestamps: true,
+        underscored: true, 
+     })
 
     return FoxGameMove
 
