@@ -57,10 +57,11 @@ export const checkUser = async (socket, data ) => {
     if (findUser){
         socket.emit('checkUserResponse', {
             status      : true,
-            user_id     : findUser.user_id,
-            lang        : findUser.language_code,
-            user_name   : `${findUser?.first_name ? findUser.first_name : findUser.username }`, 
-            balance     : findUser.balance,
+            user_id     : findUser.data.user_id,
+            lang        : findUser.data.language_code,
+            user_name   : `${findUser?.data.first_name ? findUser.data.first_name : findUser.data.username }`, 
+            balance     : findUser.data.balance,
+            first_time  : findUser.first_time
         })
     } else {
         return socket.emit('unknownUser', { status:false, message:`Invalid user ${JSON.stringify(validUser)}`})

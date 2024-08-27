@@ -41,15 +41,13 @@ export const findOrCreateUser = async ( userInfo ) =>{
         })                
     
         if (created) {
-            console.log("Create new user ",user.id, user.username, user.first_name, user.last_name )
-            user.first_time = true
+            console.log("Create new user ",user.id, user.username, user.first_name, user.last_name )            
         } else {
             await user.update({
                 token : userInfo.token
-            })
-            user.first_time = false
+            })            
         }
-        return user
+        return { data: user, first_time: created }
     } catch (error) {
         console.log("Error findUser: ",error.message)
         return null
