@@ -1,6 +1,6 @@
 <template>
     <div id="appFox">
-        <h1>Fox Hunt Game</h1> 
+        <h1 class="titleFox">Fox Hunt Game</h1> 
         <div class="info-row">
             <div class="info">
                 <span class="papirus-cursive">Time: <b>{{ formattedGameTime }}</b></span>               
@@ -168,12 +168,21 @@ onMounted(() => {
 <style scoped>
 #appFox{
     text-align: center;
+    user-select: none;
+}
+
+.titleFox{
+    user-select: none;
+    font-family: "Bradley Hand", cursive;
+    font-size : 2.5em;
+    margin-bottom: 10px;
 }
 
 .info-row {
     display: flex;
     justify-content: space-between;
     width: var(--grid-fox-width);
+    user-select: none;
 }
 
 .info {
@@ -181,6 +190,7 @@ onMounted(() => {
     font-size: 1.5em;
     background: linear-gradient(to bottom, #23c79c, #fff323);
     border-radius: 25px;
+    user-select: none;
 }
 
 .game-container {
@@ -234,6 +244,7 @@ onMounted(() => {
     max-width: var(--grid-fox-width);
     background: linear-gradient(to bottom, #23c79c, #fff323); 
     border-radius: 25px;
+    user-select: none;
 }
 .papirus-cursive{
     font-family:'Papyrus',    
