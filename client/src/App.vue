@@ -2,12 +2,12 @@
     <div>
         <div v-if="tutorialPage">           
             <main class="content">
-                <FirstPageView :user="serverInfo" @start-game="handleStartGame" />
+                <FirstPageView @start-game="handleStartGame" />
             </main> 
         </div>
         <div v-if="gameScreen>0">           
             <main class="content">
-                <MainGameScreen  @start-game="handleStartGame" :game="gameScreen" />
+                <MainGameScreen @start-game="handleStartGame" :game="gameScreen" />
             </main> 
         </div>
         <div  v-touch:swipe.left="onSwipeLeft" v-touch:swipe.right="onSwipeRight"  class="page-container" v-if="readyToShow">
@@ -36,28 +36,47 @@
     import { ref, onMounted  } from 'vue'
     import { RouterView,  useRouter, useRoute } from 'vue-router'  
     import Head from './components/Head.vue'
-    import { useWebApp } from 'vue-tg'
-    import type {ServerInfoType} from '@/types/ServerInfoType'
+    import type { ServerInfoType, responseServerInfoType } from '@/types/ServerInfoType'
     import FirstPageView from './views/FirstPageView.vue'
     import QrCode from './components/QrCodeBox.vue'
     import MainGameScreen from './views/MainGameScreen.vue'
     import Footer from './components/Footer.vue'
     import { checkUser } from './services/socketIOHandle'
-
-    const router = useRouter()
-    const route = useRoute()
-
-    const routes = ['/', '/friends', '/booster', '/leaderboard', '/settings']
+    import { useServerInfoStore } from './stores/serverInfoStore'
+ 
+    const testMode = import.meta.env.VITE_TEST_MODE
 
     const tutorialPage = ref(false)
     const readyToShow = ref(false)
     const gameScreen = ref(0)
-    
-    const { initDataUnsafe } = useWebApp()
     const isLoading = ref(false)
     const showQR = ref(false)
 
+    const serverInfoStore = useServerInfoStore()
     const serverInfo = ref<ServerInfoType|null>(null)
+   
+    /** Routing */
+    const router = useRouter()
+    const route = useRoute()
+    const routes = ['/', '/friends', '/booster', '/leaderboard', '/settings']
+
+    const onSwipeLeft = () => {
+        router.push({ path: nextRoute() })
+    }
+    const nextRoute = () => {
+        const currentIndex = routes.indexOf(route.path)
+        return routes[(currentIndex + 1) % routes.length]
+    }
+    
+    const onSwipeRight = () => {
+        router.push({ path: prevRoute() })
+    }
+    const prevRoute = () => {
+        const currentIndex = routes.indexOf(route.path)
+        return routes[(currentIndex - 1 + routes.length) % routes.length]
+    }
+
+    /** Start Game Logic */
 
     const handleStartGame = () => {
         tutorialPage.value = false
@@ -66,7 +85,7 @@
     }
 
     const startGame = ( ) =>{
-        if (serverInfo.value){
+        if (!serverInfo.value?.first_time){
             handleStartGame()
         } else {          
             tutorialPage.value = true
@@ -81,54 +100,30 @@
         gameScreen.value = game  
     }
 
-    const nextRoute = () => {
-        const currentIndex = routes.indexOf(route.path)
-        return routes[(currentIndex + 1) % routes.length]
-    }
 
-    const prevRoute = () => {
-        const currentIndex = routes.indexOf(route.path)
-        return routes[(currentIndex - 1 + routes.length) % routes.length]
-    }
-
-    const onSwipeLeft = () => {
-        router.push({ path: nextRoute() })
-    }
-
-    const onSwipeRight = () => {
-        router.push({ path: prevRoute() })
-    }
-
-    const loadTelegramUserInfo = async ( ) =>{
+    /** Init Game Logic */
+    onMounted(async()=>{
         isLoading.value = true 
         try {
-            const loadUserInfo = await checkUser( )
+            const loadUserInfo:responseServerInfoType = await checkUser( )
+
             console.log("RESULT = ",loadUserInfo)
-            return loadUserInfo
+
+            if (loadUserInfo.success){
+                serverInfo.value = loadUserInfo.data
+                serverInfoStore.setUser( serverInfo.value )
+                showQR.value = false
+                startGame()                
+            } else {
+                console.log("No telegram")
+                showQR.value = true
+            }
+            
         } catch (error) {
-            console.log("Error loadTelegramUserInfo:",error)
-            return null
+            console.log("Error when start App ",error)
+            showQR.value = true
         }finally{
             isLoading.value = false         
-        }
-    }
-
-    const checkIfParentIsTelegram = ()=>{       
-        if ( initDataUnsafe.user === undefined ) {
-            showQR.value = true
-            return false
-        } else {
-            showQR.value = false
-            return true 
-        }
-    }
-    
-    onMounted(async()=>{
-        //Убедиться, что запуск из telegram
-        const checkTLG = true;// checkIfParentIsTelegram()
-        if (checkTLG){
-            serverInfo.value = await loadTelegramUserInfo( )
-            startGame()
         }
     })
 </script>
@@ -208,6 +203,4 @@ nav a:first-of-type {
 .page-container .content-leave-active {
     transform: translateX(-100%);
 }
-
-
 </style>

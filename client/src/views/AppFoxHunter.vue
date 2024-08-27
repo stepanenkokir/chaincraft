@@ -214,6 +214,10 @@ onMounted(() => {
     transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
+.flagged{
+    background-color:rgb(146, 128, 84); 
+}
+
 .cellFox:active {
     transform: translateY(1px); 
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); 

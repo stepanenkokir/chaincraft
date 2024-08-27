@@ -3,4 +3,11 @@ export type ServerInfoType = {
     lang        : string,
     user_name   : string, 
     balance     : number,
+    first_time  : Boolean | null
+}
+
+export type responseServerInfoType = { 
+    success : Boolean, 
+    data    : ServerInfoType | null, 
+    message : string | null
 }
