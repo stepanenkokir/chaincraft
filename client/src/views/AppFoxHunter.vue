@@ -105,6 +105,11 @@ const handleClick = async ( index: number ) => {
         return
     } 
 
+    if (!gameId.value) {
+        console.error("No gameId :o(")
+        return 
+    }
+
     if ( firstClick.value ){
         if (timerFoxGame.value){
             clearInterval(timerFoxGame.value)
@@ -116,11 +121,12 @@ const handleClick = async ( index: number ) => {
     }
 
     clicks.value++
-    if (!gameId.value) {
-        return console.error("No gameId")
-    }
-   // const response = await fetch( `/check/${index}` )
+   
+    // const response = await fetch( `/check/${index}` )
+    console.log("Click ", gameId.value, index)
+
     const moveResult = await checkFoxResult( gameId.value, index, true)
+    console.log("Result moveResult ",moveResult)
     if (!moveResult.success){
         return console.error("Error moveResult ", moveResult.message)
     }

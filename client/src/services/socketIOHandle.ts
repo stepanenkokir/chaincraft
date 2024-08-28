@@ -143,6 +143,7 @@ export const startNewFoxGame = (): Promise<any> => {
 
 // Функция для проверки результата игры
 export const checkFoxResult = (gameId: string, index: number, check: Boolean): Promise<any> => {
+    console.log("Send promise")
     return new Promise((resolve, reject) => {
         socket.emit('checkFoxResult', { gameId, index, check })
         socket.once('moveProcessed', (response: any) => {
