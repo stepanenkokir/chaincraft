@@ -19,6 +19,7 @@
   "dependencies": {
     "config": "^3.3.12",
     "express": "^4.19.2",
+    "ioredis": "^5.4.1",
     "mysql2": "^3.11.0",
     "sequelize": "^6.37.3",
     "socket.io": "^4.7.5"

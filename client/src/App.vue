@@ -44,7 +44,6 @@
     import { checkUser } from './services/socketIOHandle'
     import { useServerInfoStore } from './stores/serverInfoStore'
  
-    const testMode = import.meta.env.VITE_TEST_MODE
 
     const tutorialPage = ref(false)
     const readyToShow = ref(false)
@@ -77,7 +76,6 @@
     }
 
     /** Start Game Logic */
-
     const handleStartGame = () => {
         tutorialPage.value = false
         readyToShow.value = true  
@@ -100,15 +98,11 @@
         gameScreen.value = game  
     }
 
-
     /** Init Game Logic */
     onMounted(async()=>{
         isLoading.value = true 
         try {
-            const loadUserInfo:responseServerInfoType = await checkUser( )
-
-            console.log("RESULT = ",loadUserInfo)
-
+            const loadUserInfo:responseServerInfoType = await checkUser( )       
             if (loadUserInfo.success){
                 serverInfo.value = loadUserInfo.data
                 serverInfoStore.setUser( serverInfo.value )

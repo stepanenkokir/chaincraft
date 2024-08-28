@@ -15,7 +15,7 @@ const showAlertInfo = ( message: string) =>{
 
 // URL сервера Socket.IO, возможно, нужно настроить в зависимости от вашего окружения
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
-
+const testMode = import.meta.env.VITE_TEST_MODE
 let socket: any
 
 // Инициализация соединения с сервером Socket.IO
@@ -42,16 +42,31 @@ export const initializeSocketConnection = async () => {
 
 // Функция для загрузки информации о пользователе с сервера
 export const checkUser = (): Promise<responseServerInfoType> => {
-
     const { initData } = useWebApp()
 
     console.log("ID ", initData)
-    if (initData===''){
-        return Promise.reject({
-            success : false,
-            data    : null,
-            message : 'No Telegram'
-        })
+    if (initData===''){        
+        if (testMode==='test'){            
+            const testServerInf = {
+                user_id     : 0,
+                lang        : 'en',
+                user_name   : 'Testerr', 
+                balance     : 123,
+                first_time  : false
+            }
+
+            return Promise.resolve({
+                success : true,
+                data    : testServerInf,
+                message : null
+            })
+        } else {
+            return Promise.reject({
+                success : false,
+                data    : null,
+                message : 'No Telegram'
+            })
+        }
     }
 
     return new Promise((resolve, reject) => {
@@ -100,18 +115,6 @@ export const checkUser = (): Promise<responseServerInfoType> => {
                 data    : response,
                 message : "Invalid user"
             })
-
-            // resolve({
-            //     success : true,
-            //     data    : {
-            //         user_id     : -1,
-            //         lang        : 'ru',
-            //         user_name   : 'Tester', 
-            //         balance     : 876,
-            //         first_time  : true
-            //     },
-            //     message : "Invalid user"
-            // })
         })
     })
 }

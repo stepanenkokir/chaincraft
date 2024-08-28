@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 import config from 'config'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { checkUser } from './routes/socketIOHandle.js'
+import { checkUser, startNewFoxGame, handleSelectField, handleJoinGame, handleEndGame } from './routes/socketIOHandle.js'
 import { createAllDB } from './models/index.js'
 
 const app = express()
@@ -29,17 +29,16 @@ io.on('connection', (socket) => {
 
     socket.on('checkUser', (userInfo) => checkUser(socket, userInfo))
 
-    // Обработка события старта игры через Socket.io
-   // socket.on('startNewFoxGame', startIONewFoxGame)
+    socket.on('startNewFoxGame',() => startNewFoxGame(socket))
 
-    // Обработка события проверки результата через Socket.io
-   // socket.on('checkFoxResult', checkIOFoxResult) 
-    
-    // Обработка события наблюдения за игрой через Socket.io
-  //  socket.on('observeGame', observeIOFoxGame)
+    socket.on('selectFoxField', ( gameId, index, check ) => handleSelectField(socket, io, gameId, index, check))
+
+    socket.on('joinFoxGame', ( gameId ) => handleJoinGame( socket, gameId ))
+
+    socket.on('endFoxGame', ( gameId ) => handleEndGame( gameId ))
 
     socket.on('disconnect', () => {
-        console.log('Клиент отключился:', socket.id);
+        console.log('Клиент отключился:', socket.id)
     })
 })
 

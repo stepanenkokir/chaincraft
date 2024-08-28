@@ -90,7 +90,6 @@ const startGame = async () => {
 }
 
 const handleClick = async ( index: number ) => {
-
     if ( grid[index].clicked || gameWon.value ){
         return
     } 
