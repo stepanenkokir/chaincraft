@@ -122,11 +122,21 @@ export const checkUser = (): Promise<responseServerInfoType> => {
 export const startNewFoxGame = (): Promise<any> => {
     console.log("startNewFoxGame")
     return new Promise((resolve, reject) => {
-        socket.emit('startNewFoxGame', { }, (response: any) => {
-            if (response.error) {
-                return reject(response.error)
+        socket.emit('startNewFoxGame', { })
+      
+        socket.once('gameCreated', (response: any) => {
+            if (!response || response.error) {
+                return reject({
+                    success : false,
+                    data    : null,
+                    message : response ? response.error : 'Unknown error gameCreated'
+                })
             }
-            resolve(response.data)
+            resolve({
+                success : true,
+                data    : response,
+                message : "New game created"
+            })
         })
     })
 }
