@@ -43,6 +43,7 @@ export const  handleSelectField = ( socket, io, gameId, index, check ) =>{
         const moveResult = processMove( game, socket.id, index, check )
         game.moves.push({ playerId: socket.id, index, check, moveResult })
     
+        console.log("Move ", game)
         redis.set(`game:${gameId}`, JSON.stringify(game))
         io.to(gameId).emit('moveProcessed', { index, check, moveResult })
     })
