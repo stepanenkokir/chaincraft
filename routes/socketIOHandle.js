@@ -29,8 +29,9 @@ export const processMove = ( game, id, index, check ) =>{
     return {visibleFoxes: 2, result:null}
 }
 
-export const  handleSelectField = ( socket, io, gameId, index, check ) =>{
-    redis.get(`game:${gameId}`, (err, result) => {
+export const  handleSelectField = ( socket, io, data ) =>{
+    console.log("handleSelectField ", data)
+    redis.get(`game:${data.gameId}`, (err, result) => {
         if (err) {
             return console.error('Error fetching game:', err)
         }
@@ -40,12 +41,17 @@ export const  handleSelectField = ( socket, io, gameId, index, check ) =>{
             return
         }
     
-        const moveResult = processMove( game, socket.id, index, check )
-        game.moves.push({ playerId: socket.id, index, check, moveResult })
+        const moveResult = processMove( game, socket.id, data.index, data.check )
+        game.moves.push({
+            playerId: socket.id, 
+            index: data.index, 
+            check: data.check, 
+            moveResult 
+        })
     
         console.log("Move ", game)
-        redis.set(`game:${gameId}`, JSON.stringify(game))
-        io.to(gameId).emit('moveProcessed', { index, check, moveResult })
+        redis.set(`game:${data.gameId}`, JSON.stringify(game))
+        io.to(data.gameId).emit('moveProcessed', { index, check, moveResult })
     })
 }
 

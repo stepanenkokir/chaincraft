@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
 
     socket.on('startNewFoxGame',() => startNewFoxGame(socket))
 
-    socket.on('checkFoxResult', ( gameId, index, check ) => handleSelectField(socket, io, gameId, index, check))
+    socket.on('checkFoxResult', ( data ) => handleSelectField(socket, io, data))
 
     socket.on('joinFoxGame', ( gameId ) => handleJoinGame( socket, gameId ))
 
