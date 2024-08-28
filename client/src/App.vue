@@ -102,7 +102,7 @@
     onMounted(async()=>{
         isLoading.value = true 
         try {
-            const loadUserInfo:responseServerInfoType = await checkUser( )       
+            const loadUserInfo:responseServerInfoType = await checkUser( )
             if (loadUserInfo.success){
                 serverInfo.value = loadUserInfo.data
                 serverInfoStore.setUser( serverInfo.value )

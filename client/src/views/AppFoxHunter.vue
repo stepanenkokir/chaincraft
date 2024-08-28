@@ -41,6 +41,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
+import { startNewFoxGame } from '../services/socketIOHandle'
 
 // Types
 interface GridCell {
@@ -74,8 +75,11 @@ const startGame = async () => {
     }    
     gameTime.value =0
     firstClick.value=true
+   
+    const gameId = await startNewFoxGame()
 
-   // await fetch('/start')
+    console.log("NEW GAME",gameId )
+
     grid.splice(0, grid.length, ...Array.from(
         { length: 100 }, 
         (_, index) => (

@@ -119,9 +119,10 @@ export const checkUser = (): Promise<responseServerInfoType> => {
     })
 }
 
-export const startNewFoxGame = (userInfo: any): Promise<any> => {
+export const startNewFoxGame = (): Promise<any> => {
+    console.log("startNewFoxGame")
     return new Promise((resolve, reject) => {
-        socket.emit('startNewFoxGame', { userInfo }, (response: any) => {
+        socket.emit('startNewFoxGame', { }, (response: any) => {
             if (response.error) {
                 return reject(response.error)
             }
