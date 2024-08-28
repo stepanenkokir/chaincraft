@@ -142,13 +142,22 @@ export const startNewFoxGame = (): Promise<any> => {
 }
 
 // Функция для проверки результата игры
-export const checkFoxResult = (gameId: number): Promise<any> => {
+export const checkFoxResult = (gameId: string, index: number, check: Boolean): Promise<any> => {
     return new Promise((resolve, reject) => {
-        socket.emit('checkFoxResult', { gameId }, (response: any) => {
-            if (response.error) {
-                return reject(response.error)
+        socket.emit('checkFoxResult', { gameId, index, check })
+        socket.once('moveProcessed', (response: any) => {
+            if (!response || response.error) {
+                return reject({
+                    success : false,
+                    data    : null,
+                    message : response ? response.error : 'Unknown error moveProcessed'
+                })
             }
-            resolve(response.data)
+            resolve({
+                success : true,
+                data    : response,
+                message : "Move Processed"
+            })
         })
     })
 }

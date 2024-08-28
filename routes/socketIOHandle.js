@@ -26,7 +26,7 @@ const generateInitialField = () => {
 
 export const processMove = ( game, id, index, check ) =>{
 
-    return 1
+    return {visibleFoxes: 2, result:null}
 }
 
 export const  handleSelectField = ( socket, io, gameId, index, check ) =>{
@@ -96,21 +96,6 @@ export const startNewFoxGame = async ( socket ) =>{
     redis.set(`game:${gameId}`, JSON.stringify(game))
     socket.join(gameId); // Подключаем игрока к комнате
     socket.emit('gameCreated', { gameId })
-}
-
-export const selectField =  async ({ io, socket, gameId, index, check }) => {
-    redis.get(`game:${gameId}`, (err, result) => {
-        if (err) return console.error('Error fetching game:', err)
-
-        const game = JSON.parse(result)
-        if (!game || game.gameState !== 'active') return
-
-        const moveResult = processMove(game, socket.id, index, check)
-        game.moves.push({ playerId: socket.id, index, check, moveResult })
-
-        redis.set(`game:${gameId}`, JSON.stringify(game))
-        io.to(gameId).emit('moveProcessed', { index, check, moveResult })
-    })
 }
 
 export const checkUser = async (socket, data ) => {

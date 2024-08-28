@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
-import { startNewFoxGame } from '../services/socketIOHandle'
+import { startNewFoxGame, checkFoxResult } from '../services/socketIOHandle'
 
 // Types
 interface GridCell {
@@ -59,6 +59,7 @@ const findedFox = ref(0)
 const timerFoxGame = ref< number | null>(null);
 const gameTime = ref(0)
 const firstClick = ref(true)
+const gameId = ref<string|null>(null)
 
 const formattedGameTime = computed(() => {
     const minutes = Math.floor(gameTime.value / 60);
@@ -73,10 +74,16 @@ const startGame = async () => {
     if (timerFoxGame.value !== null) {
         clearInterval(timerFoxGame.value);
     }    
-    gameTime.value =0
-    firstClick.value=true
+    gameTime.value = 0
+    firstClick.value = true
    
-    const gameId = await startNewFoxGame()
+    const resultNewGame = await startNewFoxGame()
+
+    if (!resultNewGame.success){
+        return console.error("Can't create new game ", resultNewGame.message)
+    }
+
+    gameId.value = resultNewGame.data.gameId
 
     console.log("NEW GAME",gameId )
 
@@ -99,6 +106,9 @@ const handleClick = async ( index: number ) => {
     } 
 
     if ( firstClick.value ){
+        if (timerFoxGame.value){
+            clearInterval(timerFoxGame.value)
+        }
         timerFoxGame.value = setInterval( () => {
             gameTime.value += 1
         }, 1000 )
@@ -106,8 +116,16 @@ const handleClick = async ( index: number ) => {
     }
 
     clicks.value++
-    const response = await fetch( `/check/${index}` )
-    const data = await response.json()
+    if (!gameId.value) {
+        return console.error("No gameId")
+    }
+   // const response = await fetch( `/check/${index}` )
+    const moveResult = await checkFoxResult( gameId.value, index, true)
+    if (!moveResult.success){
+        return console.error("Error moveResult ", moveResult.message)
+    }
+    const data = moveResult.moveResult
+
     grid[index].clicked = true
     grid[index].result = data.visibleFoxes
     if (data.result === 'fox') {
@@ -122,7 +140,7 @@ const handleClick = async ( index: number ) => {
     
     if (findedFox.value === 5) {
         if (timerFoxGame.value !== null) {
-            clearInterval(timerFoxGame.value);
+            clearInterval(timerFoxGame.value)
         }
         gameWon.value = true;
     }
