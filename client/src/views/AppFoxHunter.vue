@@ -130,7 +130,7 @@ const handleClick = async ( index: number ) => {
     if (!moveResult.success){
         return console.error("Error moveResult ", moveResult.message)
     }
-    const data = moveResult.moveResult
+    const data = moveResult.data.moveResult
 
     grid[index].clicked = true
     grid[index].result = data.visibleFoxes
