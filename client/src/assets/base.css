@@ -45,6 +45,15 @@
 }
 
 
+/* Define the default cell Stock101 size */
+:root {
+  --grid-stock-width: 95vw;
+  --grid-stock-columns: 4;
+  --gap-stock-size: 1px;
+  --cell-stock-size: calc((var(--grid-stock-width) - (var(--grid-stock-columns) - 1) * var(--gap-stock-size)) / var(--grid-stock-columns));
+}
+
+
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--tg-theme-bg-color);

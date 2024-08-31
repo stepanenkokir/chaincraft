@@ -2,18 +2,19 @@
     <main>
         <BackButton @click="closeBtn"/>
         
+        <AppStock101 v-if="props.game===1" />
         <AppFoxHunter v-if="props.game===2" />
 
     </main>
-    
 </template>
 
-<script setup lang="ts" >
+<script setup lang="ts" >``
     interface Props {
         game: number;        
     }    
     import { BackButton } from 'vue-tg'
     import AppFoxHunter from './AppFoxHunter.vue'
+    import AppStock101 from './AppStock101.vue'
     
     
     const emit = defineEmits(['start-game'])
