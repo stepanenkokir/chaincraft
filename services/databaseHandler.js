@@ -24,13 +24,14 @@ export const findAllUsers = async ( initData ) =>{
 export const findOrCreateUser = async ( userInfo ) =>{
     try {
         const currentUserInfo = {
-            telegram_id     : userInfo.id,
-            language_code   : userInfo.language_code,
-            last_name       : userInfo.last_name,
-            first_name      : userInfo.first_name,
-            username        : userInfo.username,
-            token           : userInfo.token,
-            balance         : 0,
+            telegram_id         : userInfo.id,
+            language_code       : userInfo.language_code,
+            last_name           : userInfo.last_name,
+            first_name          : userInfo.first_name,
+            username            : userInfo.username,
+            current_game_id     : null,
+            current_game_type   : null,
+            total_balance       : 0,
         }
 
         const [user, created] = await db.Users.findOrCreate({ 
@@ -42,11 +43,7 @@ export const findOrCreateUser = async ( userInfo ) =>{
     
         if (created) {
             console.log("Create new user ",user.id, user.username, user.first_name, user.last_name )            
-        } else {
-            await user.update({
-                token : userInfo.token
-            })            
-        }
+        } 
         return { data: user, first_time: created }
     } catch (error) {
         console.log("Error findUser: ",error.message)

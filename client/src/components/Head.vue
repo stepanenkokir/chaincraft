@@ -1,5 +1,6 @@
 <template>
     <div class="greetings">
+        <img src="@/assets/CCLogo.png" alt="Logo" class="logo" />
         <h1 class="great green"> {{ greetings }} </h1> 
     </div>
 </template>
@@ -28,6 +29,14 @@
     text-align: center;
     overflow-x: auto; /* Добавляет горизонтальный скролл */
     font-weight: bold;
+    display: flex;
+    align-items: center; /* Vertically center the image and text */
+}
+
+.logo {
+    width: 120px; /* Adjust the size as needed */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 40px; /* Space between image and text */
 }
 
 .great {

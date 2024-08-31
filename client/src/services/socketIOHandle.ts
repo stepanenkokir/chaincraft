@@ -9,7 +9,9 @@ const showAlertInfo = ( message: string) =>{
         console.log(message)
         showAlert(message)
     }catch(error){
-        console.log("Error showAlertInfo:",error)
+        // Check if the error is an instance of Error
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        console.error("Error in showAlertInfo:", errorMessage)  // Log the error message
     }
 }
 
@@ -47,23 +49,11 @@ export const initializeSocketConnection = async () => {
 // Функция для загрузки информации о пользователе с сервера
 export const checkUser = (): Promise<responseServerInfoType> => {
     const { initData } = useWebApp()
-
-    console.log("ID ", initData)
-    if (initData===''){        
+    let cInitData = initData    
+    if (initData===''){
+        console.log("testMode=",testMode)
         if (testMode==='test'){            
-            const testServerInf = {
-                user_id     : 0,
-                lang        : 'en',
-                user_name   : 'Testerr', 
-                balance     : 123,
-                first_time  : false
-            }
-
-            return Promise.resolve({
-                success : true,
-                data    : testServerInf,
-                message : null
-            })
+            cInitData = "user=%7B%22id%22%3A-211277%2C%22language_code%22%3A%22en%22%2C%22last_name%22%3A%22Guinea%22%2C%22first_name%22%3A%22Pig%22%2C%22username%22%3A%22Plaksik%22%2C%22token%22%3A%22987654321%22%2C%22balance%22%3A0%7D"
         } else {
             return Promise.reject({
                 success : false,
@@ -72,9 +62,9 @@ export const checkUser = (): Promise<responseServerInfoType> => {
             })
         }
     }
-
+  
     return new Promise((resolve, reject) => {
-        socket.emit('checkUser', { initData:initData })
+        socket.emit('checkUser', { initData:cInitData })
         // Используем socket.once для одноразового прослушивания события
         socket.once('checkUserResponse', (response: any) => {
             if (!response || response.error) {
@@ -183,5 +173,8 @@ export const closeSocketConnection = () => {
     }
 }
 
-// Убедитесь, что инициализация сокета вызывается в нужное время
-initializeSocketConnection()
+const startHandler = () => {
+    initializeSocketConnection()
+}
+
+startHandler()

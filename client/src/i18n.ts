@@ -1,3 +1,4 @@
+import { faBalanceScale } from '@fortawesome/free-solid-svg-icons'
 import { createI18n } from 'vue-i18n'
 
 interface Messages {
@@ -6,7 +7,7 @@ interface Messages {
 
 const messages: Messages = {
   en: {
-    welcomeGame     : 'Welcome to ChainCraft!',
+    welcomeGame     : 'Welcome to ChainCraft! (Beta Test)',
     welcomeMessage  : 'Hi',
     unknownName     : 'Stranger',
     yourBallance    : 'Your balance',
@@ -14,10 +15,12 @@ const messages: Messages = {
     getReadyMsg_2   : 'Invite your friends, play together, and watch their progress in real-time. Spend your coins on in-game boosters, useful items in Telegram, place bets, or simply trade them with friends. In the future, you might even be able to cash out these coins for real money.',
     getReadyMsg_3   : "For detailed rules of each game and other possibilities, click the link below. Want to receive personal messages from me with reminders and achievement updates? Let me know, and I'll keep you posted!",
     getReadyMsg_4   : "to read the detailed rules.",
-    clickHere       : "Click here"
+    clickHere       : "Click here",
+    balance         : "Balance",
+    coins            : "coins"
   },
   ru: {
-    welcomeGame     : 'Добро пожаловать в ChainCraft!',
+    welcomeGame     : 'Добро пожаловать в ChainCraft! (TECT)',
     welcomeMessage  : 'Привет',
     unknownName     : 'Незнакомец',
     yourBallance    : 'Ваш баланс',
@@ -25,7 +28,9 @@ const messages: Messages = {
     getReadyMsg_2   : 'Побеждайте и зарабатывайте монеты! Чем больше вы выигрываете, тем больше монет вы получите. Приглашайте друзей, играйте вместе и наблюдайте за их успехами в реальном времени. Монеты можно тратить на различные внутриигровые бонусы, полезные предметы в Телеграме, делать ставки в играх или даже обмениваться ими с друзьями. В будущем будет возможность обменять их на реальные деньги.',
     getReadyMsg_3   : "Чтобы узнать подробные правила каждой игры и узнать о других возможностях, переходите по ссылкам в нашем Телеграм-боте. Хотите получать от меня личные сообщения с напоминаниями и достижениями? Дайте знать, и я буду держать вас в курсе!",
     getReadyMsg_4   : "чтобы прочитать подробности",
-    clickHere       : "Кликни сюда"
+    clickHere       : "Кликни сюда",
+    balance         : "Balance",
+    coins           : "coins"
   },
 }
 

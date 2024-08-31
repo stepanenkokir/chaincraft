@@ -318,7 +318,7 @@ onMounted(() => {
 .sprite {   
     width: 50px; 
     height: 50px;
-    background: url('run_fox_frame_cr2.png') no-repeat;
+    background: url('@/assets/run_fox_frame.png') no-repeat;
     animation: play 0.5s steps(6) infinite, move 2s linear forwards;
     z-index: 2000;
 }

@@ -9,11 +9,10 @@ export default (sequelize) => {
             allowNull: false
         },
         //game_id: { type: DataTypes.INTEGER, references: { model: 'GameInitialization', key: 'id' } },
-        fox_game_id: DataTypes.INTEGER,        
-        click_number: DataTypes.INTEGER,
-        click_time: DataTypes.DATE,
-        click_field_index: DataTypes.INTEGER,
-        click_field_result: DataTypes.STRING,
+        fox_game_id : DataTypes.INTEGER,        
+        clicks      : DataTypes.INTEGER,
+        game_time   : DataTypes.INTEGER,
+        moves       : DataTypes.BLOB
     }, { 
         timestamps: true,
         underscored: true, 
