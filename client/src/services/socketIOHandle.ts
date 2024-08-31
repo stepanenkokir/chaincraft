@@ -33,6 +33,10 @@ export const initializeSocketConnection = async () => {
         showAlertInfo('Disconnected from the server')
     })
 
+    socket.on('failMove', ( msg: string ) => {
+        showAlertInfo('Incorrect move: '+JSON.stringify(msg))
+    })
+
     socket.on('connect_error', (err: any) => {
         showAlertInfo(`Connection error: ${JSON.stringify(err)}`)
     })
@@ -142,11 +146,11 @@ export const startNewFoxGame = (): Promise<any> => {
 }
 
 // Функция для проверки результата игры
-export const checkFoxResult = (gameId: string, index: number, check: Boolean): Promise<any> => {
-    console.log("Send promise")
+export const checkFoxResult = (gameId: string, index: number, leftButton: Boolean): Promise<any> => {
+  //  console.log("Send promise = ", gameId)
     return new Promise((resolve, reject) => {
-        socket.emit('checkFoxResult', { gameId, index, check })
-        socket.once('moveProcessed', (response: any) => {
+        socket.emit('checkFoxResult', { gameId, index, leftButton })
+        socket.once('moveMade', (response: any) => {            
             if (!response || response.error) {
                 return reject({
                     success : false,

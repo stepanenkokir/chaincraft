@@ -25,7 +25,7 @@
                     @click="handleClick(cell.index)"
                     @contextmenu.prevent="handleRightClick(cell.index)"
                 >
-                    <div class="cellFox">
+                    <div>
                         <span v-if="cell.flagged" class="flag">❌</span>
                         <div v-if="cell.withFox" class="winCell">
                             <span class="sprite" />
@@ -85,7 +85,7 @@ const startGame = async () => {
 
     gameId.value = resultNewGame.data.gameId
 
-    console.log("NEW GAME",gameId )
+  //  console.log("NEW GAME",gameId )
 
     grid.splice(0, grid.length, ...Array.from(
         { length: 100 }, 
@@ -123,21 +123,26 @@ const handleClick = async ( index: number ) => {
     clicks.value++
    
     // const response = await fetch( `/check/${index}` )
-    console.log("Click ", gameId.value, index)
+  //  console.log("Click ", gameId.value, index)
 
     const moveResult = await checkFoxResult( gameId.value, index, true)
-    console.log("Result moveResult ",moveResult)
+   // console.log("Result moveResult ",moveResult)
     if (!moveResult.success){
         return console.error("Error moveResult ", moveResult.message)
+    }    
+    const decodeResult = moveResult.data.status.split('_')
+  
+    const data = {
+        visibleFoxes : decodeResult[2], 
+        result       : decodeResult[3]==="true" ? "fox" : null
     }
-    const data = moveResult.data.moveResult
 
     grid[index].clicked = true
     grid[index].result = data.visibleFoxes
     if (data.result === 'fox') {
         findedFox.value++
         grid[index].withFox = true
-     //   grid[index].result =  '🐺 ' + data.visibleFoxes
+       // grid[index].result =  '🐺 ' + data.visibleFoxes
     } 
 
     if ( data.visibleFoxes === 0 ){
@@ -236,6 +241,7 @@ onMounted(() => {
 }
 
 .cellFox {
+    font-size: 2em;
     position: relative;
     width: var(--cell-fox-size);
     height: var(--cell-fox-size);
@@ -249,6 +255,10 @@ onMounted(() => {
     user-select: none;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
     transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.withFox {
+    background-color:rgb(245, 40, 119); 
 }
 
 .flagged{
@@ -277,4 +287,50 @@ onMounted(() => {
     font-family:'Papyrus',    
     /*,cursive*/
 }
+
+.flag {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.result {
+    position: absolute;
+    top: 50%;
+    left: 50%;    
+    transform: translate(-50%, -50%);
+    z-index: 2; /* значение больше, чем у flag */
+    pointer-events: none; /* чтобы клики не проходили сквозь */
+}
+
+.start-button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    max-width: calc(var(--cell-size) * 10 + 45px); /* Match the width of the grid */
+}
+
+.sprite {   
+    width: 50px; 
+    height: 50px;
+    background: url('run_fox_frame_cr2.png') no-repeat;
+    animation: play 0.5s steps(6) infinite, move 2s linear forwards;
+    z-index: 2000;
+}
+@keyframes play {
+    0% { background-position: 0 0; }
+   
+    100% { background-position: -300px 0; } 
+}
+@keyframes move {
+    0% { transform: translateX(0); opacity: 1;}
+    90% { transform: translateX(200px); opacity: 1;}
+    100% { transform: translateX(250px); opacity: 0; }
+} 
+
 </style>

@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url'
 import config from 'config'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { checkUser, startNewFoxGame, handleSelectField, handleJoinGame, handleEndGame } from './routes/socketIOHandle.js'
+import { checkUser } from './routes/socketIOHandle.js'
+import { startNewFoxGame, handlePlayerMove } from './routes/foxHunterIOHandle.js'
 import { createAllDB } from './models/index.js'
 
 const app = express()
@@ -29,13 +30,18 @@ io.on('connection', (socket) => {
 
     socket.on('checkUser', (userInfo) => checkUser(socket, userInfo))
 
+    //-------------- FOX HUNTER ------------------------------
     socket.on('startNewFoxGame',() => startNewFoxGame(socket))
 
-    socket.on('checkFoxResult', ( data ) => handleSelectField(socket, io, data))
+    socket.on('checkFoxResult', ( data ) => handlePlayerMove(socket, data))
 
-    socket.on('joinFoxGame', ( gameId ) => handleJoinGame( socket, gameId ))
+   // socket.on('joinFoxGame', ( gameId ) => handleJoinGame( socket, gameId ))
 
-    socket.on('endFoxGame', ( gameId ) => handleEndGame( gameId ))
+    //socket.on('endFoxGame', ( gameId ) => handleEndGame( gameId ))
+
+    //---------------  STOCK 101  -------------------------------
+
+    //--------------- TIC TAC TOE -------------------------------
 
     socket.on('disconnect', () => {
         console.log('Клиент отключился:', socket.id)
