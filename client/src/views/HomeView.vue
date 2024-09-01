@@ -3,7 +3,7 @@
         <div class="button-container">
             <div class="info-row">
                 <div class="info">
-                    <div class="papirus-cursive">{{ t('Rating') }}: <span class="main-span">Noob</span></div>
+                    <div class="papirus-cursive">{{ t('Rating') }}: <span class="main-span">Newbie</span></div>
                 </div>
                 <div class="info">
                     <div class="papirus-cursive">{{ t('balance') }}: <span class="main-span">{{ totalBalance }}</span></div>
