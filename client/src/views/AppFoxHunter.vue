@@ -10,11 +10,15 @@
             </div>
         </div>
         <div class="game-container">
-            <div v-if="gameWon" class="congratulations">
-                You won the game in {{ formattedGameTime }} and {{ clicks }} clicks.
+            <div v-if="gameWon" class="modal-overlay">
                 <div class="pyro">
                     <div class="before"></div>
                     <div class="after"></div>
+                </div>
+                <div class="modal">
+                    <h2>WIN</h2>
+                    <h3>You won the game in {{ formattedGameTime }} and {{ clicks }} clicks.</h3>
+                    <button class="start-button papirus-cursive" @click="startGame">OK</button>
                 </div>
             </div>
             <div class="gridFox">
@@ -35,6 +39,7 @@
                 </div> 
             </div>
         </div>
+       
         <button class="start-button papirus-cursive" @click="startGame">Restart New Game</button>
     </div>
 </template>
@@ -286,6 +291,31 @@ onMounted(() => {
 .papirus-cursive{
     font-family:'Papyrus',    
     /*,cursive*/
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    /*align-items: center;*/
+    z-index: 1000;
+}
+
+.modal {
+    background: rgb(204, 204, 204);
+    width: 90vw;
+    height: 20vh;
+    padding: 20px;
+    margin: 20%;
+    border-radius: 10px;
+    text-align: center;
+    will-change: transform;
+    animation: grow 0.1s ease-in-out;
 }
 
 .flag {

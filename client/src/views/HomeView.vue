@@ -1,16 +1,14 @@
 <template>
     <div class="appMain">
-        <div class="info-row">
-            <div class="info">
-                <div class="papirus-cursive">{{ t('Rating') }}: <span class="main-span">Nube</span></div>
-            </div>
-            <div class="info">
-                <div class="papirus-cursive">{{ t('balance') }}: <span class="main-span">{{ totalBalance }}</span></div>
-            </div>
-        </div>
-
-        
         <div class="button-container">
+            <div class="info-row">
+                <div class="info">
+                    <div class="papirus-cursive">{{ t('Rating') }}: <span class="main-span">Nube</span></div>
+                </div>
+                <div class="info">
+                    <div class="papirus-cursive">{{ t('balance') }}: <span class="main-span">{{ totalBalance }}</span></div>
+                </div>
+            </div>
             <button class="vertical-button" @click="startGame(1)">Stock101</button>
             <button class="vertical-button" @click="startGame(2)">FoxHunter</button>
             <button class="vertical-button" @click="startGame(3)">Tic Tac Toe</button>
@@ -62,7 +60,7 @@
 .info-row {
     display: flex;
     justify-content: space-between;
-    width: var(--grid-fox-width);
+    width: 90%;
     user-select: none;
 }
 

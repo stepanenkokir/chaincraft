@@ -11,16 +11,16 @@
         </div>
         <div class="game-container">
             <div class="grid">
-            <div
-                v-for="cell in grid"
-                :key="cell.index"
-                :class="['cell', cell.color, cell.shift ??'']"
-                @click="handleClick(cell.index)"
-            >
-                <div class="cell">
-                    <span class="result">{{ cell.result }}</span>
-                </div>   
-            </div>
+                <div
+                    v-for="cell in grid"
+                    :key="cell.index"
+                    :class="['cell', cell.color, cell.shift ??'']"
+                    @click="handleClick(cell.index)"
+                >
+                    <div class="cell">
+                        <span class="result">{{ cell.result }}</span>
+                    </div>   
+                </div>
             </div>
         </div>
         <div v-if="gameOver" class="modal-overlay">
@@ -32,6 +32,7 @@
                 <h5>BEST SCORE {{ bestScore }}</h5>
                 <h5>MAX HEAP {{ maxHeap }}</h5>
                 <button @click="startGame">RESTART</button>
+                <button class="back-button" @click="rollback">Rollback</button>
             </div>
         </div>
         <div v-if="gameWin" class="modal-overlay">
@@ -42,6 +43,7 @@
                 <button @click="continueGame">Continue</button>
             </div>
         </div>
+        <button class="back-button" @click="rollback">Rollback</button>
     </div>
 </template>
 
@@ -67,6 +69,9 @@
     
     const GOAL_STOCK = 101
     const grid = reactive<GridCell[]>([])
+     
+    const historyStack = ref<GridCell[][]>([]);
+    
     const gridSize = 4
     const colors = ['A', 'B', 'C', 'E']
     const goal = ref(GOAL_STOCK)
@@ -84,7 +89,7 @@
     const startGame = () => {
         
         let findNeighborResult:neighbourInfo
-        gameOver.value =  false
+        gameWin.value =  false
         gameOver.value =  false
         score.value = 0
         heap.value = 0
@@ -104,6 +109,29 @@
             console.log(findNeighborResult.gameOver)
         } while (findNeighborResult.gameOver)             
     }
+
+   
+
+    // Функция для добавления состояния в стек истории
+    const saveHistory = () => {
+        // Сохранение копии текущего состояния grid в стек
+        historyStack.value.push(JSON.parse(JSON.stringify(grid)));
+    }
+
+    const rollback = () =>{
+        if (historyStack.value.length > 0) {
+            const previousState = historyStack.value.pop(); // Извлекаем последнее сохраненное состояние
+            if (previousState) {
+                // Восстанавливаем состояние grid
+                grid.splice(0, grid.length, ...previousState);
+            }
+        }
+
+        if ( gameOver.value ){
+            gameOver.value =  false
+        }
+    }
+
 
     
     const findNeighbors = () => {
@@ -195,6 +223,8 @@
         const currentColor = cell.color
         let sum = cell.result
 
+        saveHistory()
+
         //check right
         let curr_indx = index+1
         if (curr_indx<gridSize*gridSize && index%gridSize!==3 && grid[curr_indx].color === currentColor){       
@@ -253,8 +283,10 @@
             grid[index].color='D'
             setTimeout(newCells,100, index, sum)
         }
+       
     }
 
+    
     onMounted(() => {
         startGame()
     })
@@ -317,7 +349,7 @@
     cursor: pointer;
     user-select: none;
     border-radius: 10%;
-    
+    border: 2px solid #000000;
     aspect-ratio: 1;
 }
 

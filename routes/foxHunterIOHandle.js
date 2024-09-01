@@ -47,7 +47,7 @@ export const startNewFoxGame = async (socket) => {
     // Время жизни игры в базе - 1 час
     await redis.expire(`game:${gameId}:state`, 3600); 
     // Присоединяем игрока к комнате
-    console.log(gameState)
+   // console.log(gameState)
     socket.join(gameId);
     socket.emit('gameCreated', { gameId });
 };
@@ -75,7 +75,7 @@ export const handlePlayerMove = async (socket, { gameId, index, leftButton }) =>
 
         // Добавляем ход в историю
         gameState.moves.push(newStatus)
-        console.log(gameState)
+       // console.log(gameState)
 
         //Проверяем лис
         if (foxNearby) {           
