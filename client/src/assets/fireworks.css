@@ -3,10 +3,13 @@
     text-align: center;
     font-size: 2em;
     color:#00ff3c;
-    animation: popup 2s ease-out, fadeInOut 5s ease-in-out;
+    animation: popup 5s ease-out, fadeInOut 5s ease-in-out;
     z-index: 1;
   }
-  
+  :root{
+    --height-of-fireworks: 500px;
+  }
+
   @keyframes popup {
     0% {
       transform: translateY(100%);
@@ -33,6 +36,7 @@
   
   .pyro > .before,
   .pyro > .after {
+    z-index: 2000;
     position: absolute;
     width: 10px;
     height: 10px;
@@ -85,51 +89,51 @@
   }
   @-webkit-keyframes gravity {
     to {
-      transform: translateY(200px);
-      -moz-transform: translateY(200px);
-      -webkit-transform: translateY(200px);
-      -o-transform: translateY(200px);
-      -ms-transform: translateY(200px);
+      transform: translateY(var(--height-of-fireworks));
+      -moz-transform: translateY(var(--height-of-fireworks));
+      -webkit-transform: translateY(var(--height-of-fireworks));
+      -o-transform: translateY(var(--height-of-fireworks));
+      -ms-transform: translateY(var(--height-of-fireworks));
       opacity: 0;
     }
   }
   @-moz-keyframes gravity {
     to {
-      transform: translateY(200px);
-      -moz-transform: translateY(200px);
-      -webkit-transform: translateY(200px);
-      -o-transform: translateY(200px);
-      -ms-transform: translateY(200px);
+      transform: translateY(var(--height-of-fireworks));
+      -moz-transform: translateY(var(--height-of-fireworks));
+      -webkit-transform: translateY(var(--height-of-fireworks));
+      -o-transform: translateY(var(--height-of-fireworks));
+      -ms-transform: translateY(var(--height-of-fireworks));
       opacity: 0;
     }
   }
   @-o-keyframes gravity {
     to {
-      transform: translateY(200px);
-      -moz-transform: translateY(200px);
-      -webkit-transform: translateY(200px);
-      -o-transform: translateY(200px);
-      -ms-transform: translateY(200px);
+      transform: translateY(var(--height-of-fireworks));
+      -moz-transform: translateY(var(--height-of-fireworks));
+      -webkit-transform: translateY(var(--height-of-fireworks));
+      -o-transform: translateY(var(--height-of-fireworks));
+      -ms-transform: translateY(var(--height-of-fireworks));
       opacity: 0;
     }
   }
   @-ms-keyframes gravity {
     to {
-      transform: translateY(200px);
-      -moz-transform: translateY(200px);
-      -webkit-transform: translateY(200px);
-      -o-transform: translateY(200px);
-      -ms-transform: translateY(200px);
+      transform: translateY(var(--height-of-fireworks));
+      -moz-transform: translateY(var(--height-of-fireworks));
+      -webkit-transform: translateY(var(--height-of-fireworks));
+      -o-transform: translateY(var(--height-of-fireworks));
+      -ms-transform: translateY(var(--height-of-fireworks));
       opacity: 0;
     }
   }
   @keyframes gravity {
     to {
-      transform: translateY(200px);
-      -moz-transform: translateY(200px);
-      -webkit-transform: translateY(200px);
-      -o-transform: translateY(200px);
-      -ms-transform: translateY(200px);
+      transform: translateY(var(--height-of-fireworks));
+      -moz-transform: translateY(var(--height-of-fireworks));
+      -webkit-transform: translateY(var(--height-of-fireworks));
+      -o-transform: translateY(var(--height-of-fireworks));
+      -ms-transform: translateY(var(--height-of-fireworks));
       opacity: 0;
     }
   }

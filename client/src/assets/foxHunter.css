@@ -49,7 +49,7 @@
     background: url('@/assets/run_fox_frame.png') no-repeat;
     background-size: calc(var(--cell-fox-size)*6) auto;
     animation: play-fox-sprite 0.5s steps(6) infinite, move-fox-sprite-forward 2s linear forwards;
-    z-index: 2000;
+    z-index: 10;
 }
 
 @keyframes play-fox-sprite {
@@ -72,7 +72,7 @@
     background: url('@/assets/run_fox_frame-reverse.png') no-repeat;
     background-size: calc(var(--cell-fox-size)*6) auto;
     animation: play-fox-sprite 0.5s steps(6) infinite, move-fox-sprite-reverse 2s linear forwards;
-    z-index: 2000;
+    z-index: 10;
 }
 
 /* Reverse move animation */

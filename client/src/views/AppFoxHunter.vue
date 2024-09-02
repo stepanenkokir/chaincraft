@@ -17,6 +17,7 @@
                 </div>
                 <div class="modal">
                     <h2>WIN</h2>
+                    <hr/>
                     <h3>You won the game in {{ formattedGameTime }} and {{ clicks }} clicks.</h3>
                     <button class="start-button papirus-cursive" @click="startGame">OK</button>
                 </div>
@@ -119,7 +120,7 @@ const handleClick = async ( index: number ) => {
 
     fillGrid( index, 'find')
     setTimeout( () => {clearFindBlink()}, 500 )
-    
+
     if ( grid[index].clicked || gameWon.value ){
         return
     } 
@@ -141,9 +142,6 @@ const handleClick = async ( index: number ) => {
 
     clicks.value++
 
-   
-   
-
     const moveResult = await checkFoxResult( gameId.value, index, true)
    // console.log("Result moveResult ",moveResult)
     if (!moveResult.success){
@@ -159,6 +157,7 @@ const handleClick = async ( index: number ) => {
     console.log(data)
 
     grid[index].clicked = true
+    grid[index].flagged = false
     grid[index].result = data.visibleFoxes
     if (data.result === 'fox') {
         findedFox.value++
@@ -219,7 +218,7 @@ const fillGrid = ( index:number, type:string="" ) => {
 
 const handleRightClick = ( index:number ) => {
     console.log("handleRightClick!!!")
-    if ( grid[index].clicked ){
+    if ( grid[index].withFox ){
         return
     }
     grid[index].flagged = !grid[index].flagged
@@ -275,7 +274,7 @@ onMounted(() => {
 
 .start-button {
     display: block;
-    margin: 20px auto;
+    margin-top: 20px;
     padding: 10px 20px;
     font-size: 1.5em;
     font-weight: 800;
@@ -308,8 +307,8 @@ onMounted(() => {
     background: rgb(204, 204, 204);
     width: 90vw;
     height: 20vh;
-    padding: 20px;
-    margin: 20%;
+    padding: 10px;
+    margin-top: 20%;
     border-radius: 10px;
     text-align: center;
     will-change: transform;
