@@ -72,8 +72,8 @@
      
     const historyStack = ref<GridCell[][]>([]);
     
-    const gridSize = 5
-    const colors = ['B', 'C', 'D', 'E','F']
+    const gridSize = 4
+    const colors = ['B', 'C', 'D', 'E']
     const goal = ref(GOAL_STOCK)
 
     const prize = ref(1)
@@ -189,7 +189,7 @@
                 cell.shift = null
                 if (!cell.result){
                     cell.result =  1,
-                    cell.color = colors[Math.floor(Math.random()*5)]
+                    cell.color = colors[Math.floor(Math.random()*4)]
                     cell.shift = 'new-data'
                 }
             }

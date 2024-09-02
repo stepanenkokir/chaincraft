@@ -274,7 +274,7 @@ onMounted(() => {
 
 .start-button {
     display: block;
-    margin-top: 20px;
+    margin-top: 20px auto;
     padding: 10px 20px;
     font-size: 1.5em;
     font-weight: 800;
