@@ -9,6 +9,15 @@
                 <span class="papirus-cursive">Clicks: <b>{{ clicks }}</b></span>              
             </div>
         </div>
+        <div class="rowOfIcon">
+            <img 
+                v-for="n in 5" 
+                :key="n" 
+                src="@/assets/waiting_fox.png" 
+                :class="[findedFox>=n ? '' : 'grayscale']"
+                alt="Fox Icon" 
+            />
+        </div>
         <div class="game-container">
             <div v-if="gameWon" class="modal-overlay">
                 <div class="pyro">
@@ -248,7 +257,6 @@ onMounted(() => {
 
 .game-container {
     display: inline-block;
-    margin-top: 20px;
 }
 
 .findBlink {
