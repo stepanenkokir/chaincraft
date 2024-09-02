@@ -72,7 +72,7 @@
      
     const historyStack = ref<GridCell[][]>([]);
     
-    const gridSize = 4
+    const gridSize = 5
     const colors = ['B', 'C', 'D', 'E','F']
     const goal = ref(GOAL_STOCK)
 
@@ -329,7 +329,7 @@
 .grid {
     display: grid;
    
-    grid-template-columns: repeat(4, var(--cell-stock-size));
+    grid-template-columns: repeat(var(--grid-stock-columns), var(--cell-stock-size));
     gap: var(--gap-stock-size);
     justify-content: center;
     user-select: none;
