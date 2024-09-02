@@ -73,7 +73,7 @@
     const historyStack = ref<GridCell[][]>([]);
     
     const gridSize = 4
-    const colors = ['A', 'B', 'C', 'E']
+    const colors = ['B', 'C', 'D', 'E','F']
     const goal = ref(GOAL_STOCK)
 
     const prize = ref(1)
@@ -189,7 +189,7 @@
                 cell.shift = null
                 if (!cell.result){
                     cell.result =  1,
-                    cell.color = colors[Math.floor(Math.random()*3)]
+                    cell.color = colors[Math.floor(Math.random()*5)]
                     cell.shift = 'new-data'
                 }
             }
@@ -280,7 +280,7 @@
         }
         
         if (cell.result!==sum){
-            grid[index].color='D'
+            grid[index].color='A'
             setTimeout(newCells,100, index, sum)
         }
        
@@ -446,10 +446,11 @@ button:hover {
 }
 
 
-.A { background-color: #fdf2bc; }
-.B { background-color: #357978; }
-.C { background-color: #ec5072; }
-.D { background-color: #fef653; }
-.E { background-color: #f3ab3d; }
+.A { background-color: #fd0101; }
+.B { background-color: #ffa600; }
+.C { background-color: #ffee00; }
+.D { background-color: #61fe53; }
+.E { background-color: #3ddef3; }
+.F { background-color: #b71ddd; }
 </style>
   
