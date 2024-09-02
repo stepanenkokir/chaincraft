@@ -116,6 +116,10 @@ const startGame = async () => {
 }
 
 const handleClick = async ( index: number ) => {
+
+    fillGrid( index, 'find')
+    setTimeout( () => {clearFindBlink()}, 500 )
+    
     if ( grid[index].clicked || gameWon.value ){
         return
     } 
@@ -137,8 +141,7 @@ const handleClick = async ( index: number ) => {
 
     clicks.value++
 
-    fillGrid( index, 'find')
-    setTimeout( () => {clearFindBlink()}, 200 )
+   
    
 
     const moveResult = await checkFoxResult( gameId.value, index, true)
@@ -250,14 +253,14 @@ onMounted(() => {
 }
 
 .findBlink {
-    animation: blink 0.2s ease-in-out; 
+    animation: blink 0.4s ease-in-out; 
 }
 @keyframes blink {
     0%,100% {
-        background-color: transparent;
+        opacity: 1;
     }
-    50% {
-        background-color: white;
+    30% {
+        opacity: 0.7;
     }
     
 }
