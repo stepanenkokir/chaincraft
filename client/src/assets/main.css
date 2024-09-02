@@ -1,5 +1,8 @@
 @import './base.css';
 @import './fireworks.css';
+@import './foxHunter.css';
+
+
 a,
 .green {
   text-decoration: none;

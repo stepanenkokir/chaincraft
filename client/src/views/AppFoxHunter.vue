@@ -25,17 +25,21 @@
                 <div
                     v-for="cell in grid"
                     :key="cell.index"
-                    :class="['cellFox', cell.clicked ? 'clicked' : '', cell.flagged ? 'flagged' : '', cell.withFox ? 'withFox' : '']"
+                    :class="[
+                        'cellFox', 
+                        cell.clicked ? 'clicked' : '', 
+                        cell.flagged ? 'flagged' : '', 
+                        cell.withFox ? 'withFox' : '',
+                        cell.findBlink ? 'findBlink' : '',
+                    ]"
                     @click="handleClick(cell.index)"
                     @contextmenu.prevent="handleRightClick(cell.index)"
                 >
+                    <span v-if="cell.withFox" :class="[cell.index % 10 > 5 ? 'fox-sprite-reverse' : 'fox-sprite-forward']"/>
                     <div>
                         <span v-if="cell.flagged" class="flag">❌</span>
-                        <div v-if="cell.withFox" class="winCell">
-                            <span class="sprite" />
-                        </div>
                         <span v-if="cell.clicked" class="result">{{ cell.result }}</span>
-                    </div>             
+                    </div>
                 </div> 
             </div>
         </div>
@@ -55,6 +59,7 @@ interface GridCell {
     result: string;
     flagged: boolean;
     withFox: boolean;
+    findBlink: boolean;
 }
 
 const grid = reactive<GridCell[]>([])
@@ -71,6 +76,10 @@ const formattedGameTime = computed(() => {
     const seconds = gameTime.value % 60;
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 })
+
+const clearFindBlink = () => {
+    grid.forEach(cell => cell.findBlink=false) 
+}
 
 const startGame = async () => {
     gameWon.value = false
@@ -100,7 +109,8 @@ const startGame = async () => {
                 clicked: false, 
                 result: '', 
                 flagged: false, 
-                withFox: false 
+                withFox: false,
+                findBlink: false 
             }))
     )
 }
@@ -126,9 +136,10 @@ const handleClick = async ( index: number ) => {
     }
 
     clicks.value++
+
+    fillGrid( index, 'find')
+    setTimeout( () => {clearFindBlink()}, 200 )
    
-    // const response = await fetch( `/check/${index}` )
-  //  console.log("Click ", gameId.value, index)
 
     const moveResult = await checkFoxResult( gameId.value, index, true)
    // console.log("Result moveResult ",moveResult)
@@ -142,6 +153,8 @@ const handleClick = async ( index: number ) => {
         result       : decodeResult[3]==="true" ? "fox" : null
     }
 
+    console.log(data)
+
     grid[index].clicked = true
     grid[index].result = data.visibleFoxes
     if (data.result === 'fox') {
@@ -150,8 +163,9 @@ const handleClick = async ( index: number ) => {
        // grid[index].result =  '🐺 ' + data.visibleFoxes
     } 
 
-    if ( data.visibleFoxes === 0 ){
-        fillFlagged( index )
+    if ( data.visibleFoxes === "0" ){
+        console.log("FILLL")
+        fillGrid( index, 'flag' )
     }
     
     if (findedFox.value === 5) {
@@ -162,7 +176,11 @@ const handleClick = async ( index: number ) => {
     }
 }
 
-const fillFlagged = ( index:number ) => {
+const fillGrid = ( index:number, type:string="" ) => {
+    if (type===""){
+        return
+    }
+
     const directions = [
         -1, 1, -10, 10, -11, -9, 9, 11,
     ]
@@ -181,9 +199,16 @@ const fillFlagged = ( index:number ) => {
             if (( dir === -9 || dir === 11 ) && ( pos % 10 < index % 10 )) {
                 break
             }
-            if ( !grid[pos].clicked ){
-                grid[pos].flagged = true
+            if (type==="flag"){
+                if ( !grid[pos].clicked ){
+                    grid[pos].flagged = true
+                }
             }
+
+            if (type==="find"){
+                grid[pos].findBlink = true                
+            }
+            
             pos += dir
         }
     })
@@ -203,17 +228,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#appFox{
-    text-align: center;
-    user-select: none;
-}
-
-.titleFox{
-    user-select: none;
-    font-family: "Bradley Hand", cursive;
-    font-size : 2.5em;
-    margin-bottom: 10px;
-}
 
 .info-row {
     display: flex;
@@ -235,31 +249,17 @@ onMounted(() => {
     margin-top: 20px;
 }
 
-.gridFox {
-    display: grid;
-    grid-template-columns: repeat(10, var(--cell-fox-size));
-    gap: var(--gap-fox-size);
-    justify-content: center;
-    user-select: none;
-    margin: 0 auto;
-    width: var(--grid-fox-width);
+.findBlink {
+    animation: blink 0.2s ease-in-out; 
 }
-
-.cellFox {
-    font-size: 2em;
-    position: relative;
-    width: var(--cell-fox-size);
-    height: var(--cell-fox-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #000;
-    background-color:rgb(255, 209, 93);
-    border-radius: 1px;
-    cursor: pointer;
-    user-select: none;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+@keyframes blink {
+    0%,100% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: white;
+    }
+    
 }
 
 .withFox {
@@ -268,11 +268,6 @@ onMounted(() => {
 
 .flagged{
     background-color:rgb(146, 128, 84); 
-}
-
-.cellFox:active {
-    transform: translateY(1px); 
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); 
 }
 
 .start-button {
@@ -335,32 +330,5 @@ onMounted(() => {
     pointer-events: none; /* чтобы клики не проходили сквозь */
 }
 
-.start-button {
-    display: block;
-    margin: 10px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    width: 100%;
-    max-width: calc(var(--cell-size) * 10 + 45px); /* Match the width of the grid */
-}
-
-.sprite {   
-    width: 50px; 
-    height: 50px;
-    background: url('@/assets/run_fox_frame.png') no-repeat;
-    animation: play 0.5s steps(6) infinite, move 2s linear forwards;
-    z-index: 2000;
-}
-@keyframes play {
-    0% { background-position: 0 0; }
-   
-    100% { background-position: -300px 0; } 
-}
-@keyframes move {
-    0% { transform: translateX(0); opacity: 1;}
-    90% { transform: translateX(200px); opacity: 1;}
-    100% { transform: translateX(250px); opacity: 0; }
-} 
 
 </style>

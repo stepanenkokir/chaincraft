@@ -189,7 +189,7 @@
                 cell.shift = null
                 if (!cell.result){
                     cell.result =  1,
-                    cell.color = colors[Math.floor(Math.random()*4)]
+                    cell.color = colors[Math.floor(Math.random()*3)]
                     cell.shift = 'new-data'
                 }
             }

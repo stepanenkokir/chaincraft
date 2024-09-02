@@ -1,0 +1,83 @@
+#appFox{
+    text-align: center;
+    user-select: none;
+}
+
+.titleFox{
+    user-select: none;
+    font-family: "Bradley Hand", cursive;
+    font-size : 2.5em;
+    margin-bottom: 10px;
+}
+
+.gridFox {
+    display: grid;
+    grid-template-columns: repeat(10, var(--cell-fox-size));
+    gap: var(--gap-fox-size);
+    justify-content: center;
+    user-select: none;
+    margin: 0 auto;
+    width: var(--grid-fox-width);
+    overflow: hidden;
+}
+
+.cellFox {
+    font-size: 2em;
+    position: relative;
+    width: var(--cell-fox-size);
+    height: var(--cell-fox-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+    background-color:rgb(255, 209, 93);
+    border-radius: 1px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.cellFox:active {
+    transform: translateY(1px); 
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); 
+}
+
+.fox-sprite-forward {   
+    width: var(--cell-fox-size);
+    height: var(--cell-fox-size);
+    background: url('@/assets/run_fox_frame.png') no-repeat;
+    background-size: calc(var(--cell-fox-size)*6) auto;
+    animation: play-fox-sprite 0.5s steps(6) infinite, move-fox-sprite-forward 2s linear forwards;
+    z-index: 2000;
+}
+
+@keyframes play-fox-sprite {
+    from {
+        background-position: 0;
+    }
+    to {
+        background-position: calc(-1 * var(--cell-fox-size) * 6) 0;
+    }
+}
+@keyframes move-fox-sprite-forward {
+    0% { transform: translateX(0); opacity: 1;}
+    90% { transform: translateX(200px); opacity: 1;}
+    100% { transform: translateX(250px); opacity: 0; z-index: -1; }
+}
+
+.fox-sprite-reverse {
+    width: var(--cell-fox-size);
+    height: var(--cell-fox-size);
+    background: url('@/assets/run_fox_frame-reverse.png') no-repeat;
+    background-size: calc(var(--cell-fox-size)*6) auto;
+    animation: play-fox-sprite 0.5s steps(6) infinite, move-fox-sprite-reverse 2s linear forwards;
+    z-index: 2000;
+}
+
+/* Reverse move animation */
+@keyframes move-fox-sprite-reverse {
+    0% { transform: translateX(0); opacity: 1; }
+    90% { transform: translateX(-200px); opacity: 1; }
+    100% { transform: translateX(-250px); opacity: 0; z-index: -1;}
+}

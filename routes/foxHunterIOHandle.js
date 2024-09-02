@@ -1,32 +1,32 @@
-import crypto from 'crypto';
-import { Redis } from 'ioredis';
+import crypto from 'crypto'
+import { Redis } from 'ioredis'
 
-const redis = new Redis();
+const redis = new Redis()
 
 // Функция для генерации уникального ID игры
 const generateUniqueId = () => {
-    return crypto.randomUUID();
+    return crypto.randomUUID()
 };
 
 // Функция для генерации начального состояния поля
 const generateInitialField = () => {
-    const foxArray = [];
+    const foxArray = []
     while (foxArray.length < 5) {
-        const rndFox = Math.floor(Math.random() * 100);
+        const rndFox = Math.floor(Math.random() * 100)
         if (!foxArray.includes(rndFox)) {
-            foxArray.push(rndFox);
+            foxArray.push(rndFox)
         }
     }
-    return foxArray;
-};
+    return foxArray
+}
 
 // Функция для старта новой игры
 export const startNewFoxGame = async (socket) => {
-    console.log("START FOX GAME")
-    const gameId = generateUniqueId(); // Генерируем уникальный ID игры
-    const foxArray = generateInitialField(); // Генерируем начальное расположение лис
+    
+    const gameId = generateUniqueId() // Генерируем уникальный ID игры
+    const foxArray = generateInitialField() // Генерируем начальное расположение лис
 
-  //  console.log("gameId",gameId,"foxArray",foxArray)
+    console.log("gameId",gameId,"foxArray",foxArray)
 
     // Создаем начальное состояние игры
     const gameState = {
@@ -37,19 +37,18 @@ export const startNewFoxGame = async (socket) => {
     };
 
     // Инициализируем поле в Redis (все клетки изначально "unchecked")
-    const fieldKey = `game:${gameId}:field`;
+    const fieldKey = `game:${gameId}:field`
     for (let i = 0; i < 100; i++) {
-        await redis.hset(fieldKey, i, 'unchecked');
+        await redis.hset(fieldKey, i, 'unchecked')
     }
 
     // Сохраняем начальное состояние игры в Redis
-    await redis.set(`game:${gameId}:state`, JSON.stringify(gameState));
+    await redis.set(`game:${gameId}:state`, JSON.stringify(gameState))
     // Время жизни игры в базе - 1 час
-    await redis.expire(`game:${gameId}:state`, 3600); 
-    // Присоединяем игрока к комнате
-   // console.log(gameState)
-    socket.join(gameId);
-    socket.emit('gameCreated', { gameId });
+    await redis.expire(`game:${gameId}:state`, 3600)
+    // Присоединяем игрока к комнате  
+    socket.join(gameId)
+    socket.emit('gameCreated', { gameId })
 };
 
 // Функция для обработки хода игрока
@@ -67,9 +66,9 @@ export const handlePlayerMove = async (socket, { gameId, index, leftButton }) =>
         return;
     }   
     // Определяем новое состояние клетки
-    let newStatus;
+    let newStatus
     if (leftButton) {
-        const foxNearby = gameState.foxArray.includes(index);
+        const foxNearby = gameState.foxArray.includes(index)
         const revealedValue = calculateFoxProximity(index, gameState.foxArray)
         newStatus = `${index}_${leftButton}_${revealedValue}_${foxNearby}`
 
@@ -85,21 +84,21 @@ export const handlePlayerMove = async (socket, { gameId, index, leftButton }) =>
         }
     } else {
         // Обработка нажатия правой кнопки (пометка клетки)
-        const currentStatus = await redis.hget(fieldKey, index);
-        newStatus = currentStatus === 'checked' ? 'unchecked' : 'checked';
+        const currentStatus = await redis.hget(fieldKey, index)
+        newStatus = currentStatus === 'checked' ? 'unchecked' : 'checked'
     }
 
     // Обновляем состояние клетки в Redis
-    await redis.hset(fieldKey, index, newStatus);
+    await redis.hset(fieldKey, index, newStatus)
 
     // Обновляем состояние игры в Redis
-    await redis.set(gameStateKey, JSON.stringify(gameState));
+    await redis.set(gameStateKey, JSON.stringify(gameState))
 
     // Отправляем обновление клиенту
-    socket.emit('moveMade', { index, status: newStatus });
+    socket.emit('moveMade', { index, status: newStatus })
 
     // Оповещаем всех участников комнаты о новом ходе
-    socket.to(gameId).emit('updateField', { index, status: newStatus });
+    socket.to(gameId).emit('updateField', { index, status: newStatus })
 
     // Если игра закончена, уведомляем игроков
     if (gameState.gameState === 'finished') {
@@ -124,6 +123,5 @@ const calculateFoxProximity = (index, foxArray) => {
             pos += dir
         }
     })
-
     return count
 }
