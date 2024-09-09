@@ -9,7 +9,7 @@ export const findAllUsers = async ( initData ) =>{
     // Create a promise that rejects after the timeout
     const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Request timed out')), TIMEOUT_MS)
-    );
+    )
 
     try {
         const users = await Promise.race([
@@ -67,9 +67,10 @@ export const findOrCreateUser = async ( userInfo ) =>{
                 }
             })
 
-            resultInfo = []
-
-            resultInfo.push({id:2, result: `Best result: ${foxInfo.get('best_score')}`})
+            if (foxInfo){
+                resultInfo = []
+                resultInfo.push({id:2, result: `Best result: ${foxInfo.get('best_score')}`})
+            }
         } 
 
         return { data: user, resultInfo: resultInfo, first_time: created }
