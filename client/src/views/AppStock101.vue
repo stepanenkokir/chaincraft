@@ -1,46 +1,38 @@
 <template>
-    <div id="appStock"> 
-        <h1 class="titleStock">Stock 101 Game</h1> 
-        <div class="info-row">
-            <div class="info">
+    <div id="app-stock"> 
+        <h1 class="title-stock">Stock 101 Game</h1> 
+        <div class="info-row-stock">
+            <div class="info-stock">
                 <span class="papirus-cursive">Score: <b>{{ score }}</b></span>
             </div>
-            <div class="info">
+            <div class="info-stock">
                 <span class="papirus-cursive">Goal: <b> {{ goal }}</b> </span>                    
             </div>
         </div>
-        <div class="game-container">
-            <div class="grid">
+        <div class="game-container-stock">
+            <ModalViewStock 
+                v-if="gameOver"
+                :resultInfo="resultInfo"
+                @restart-game="startGame"
+                @rollback="rollback"
+            />
+
+            <ModalViewStock 
+                v-if="gameWin"
+                :resultInfo="resultInfo" 
+                @continue-game="continueGame"   
+            />
+            <div class="grid-stock">
                 <div
                     v-for="cell in grid"
                     :key="cell.index"
-                    :class="['cell', cell.color, cell.shift ??'']"
+                    :class="['cell-stock', cell.color, cell.shift ??'']"
                     @click="handleClick(cell.index)"
                 >
-                    <div class="cell">
+                    <div class="cell-stock">
                         <span class="result">{{ cell.result }}</span>
                     </div>   
                 </div>
-            </div>
-        </div>
-        <div v-if="gameOver" class="modal-overlay">
-            <div class="modal">
-                <h2>GAME OVER</h2>
-                <h3>{{ (overKill ? `Over limit ${goal}` : 'No moves left') }}</h3>
-                <h3>SCORE {{ score }}</h3>
-                <h3>HEAP {{ heap }}</h3>
-                <h5>BEST SCORE {{ bestScore }}</h5>
-                <h5>MAX HEAP {{ maxHeap }}</h5>
-                <button @click="startGame">RESTART</button>
-                <button class="back-button" @click="rollback">Rollback</button>
-            </div>
-        </div>
-        <div v-if="gameWin" class="modal-overlay">
-            <div class="modal">
-                <h2>WIN</h2>
-                <h3>You have earned {{ prize }} megacoin</h3>
-                <h5>If you collect a stack of {{ (goal+GOAL_STOCK) }}, you'll receive an additional {{ 2*prize }} coins.</h5>
-                <button @click="continueGame">Continue</button>
             </div>
         </div>
         <button class="back-button" @click="rollback">Rollback</button>
@@ -48,26 +40,11 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive, onMounted } from 'vue'
-
-    interface newValue {
-        result  : number;
-        color   : string | null;
-    }
-    interface GridCell {
-        index   : number;
-        result  : number;
-        color   : string | null;
-        shift   : string | null;
-        newValue: newValue |null;
-    }
-
-    interface neighbourInfo {
-        gameOver    : boolean;
-        win         : boolean
-    }
+    import { ref, reactive, watch, onMounted } from 'vue'
+    import ModalViewStock from '@/components/ModalViewStock.vue'
+    import type {GridCell,NeighbourInfo, ResultInfoStock} from '@/types/Stock101Interface'
     
-    const GOAL_STOCK = 101
+    const GOAL_STOCK = 10
     const grid = reactive<GridCell[]>([])
      
     const historyStack = ref<GridCell[][]>([]);
@@ -80,15 +57,44 @@
 
     const score = ref(0)
     const heap = ref(0)
-    const bestScore = ref(4043)
-    const maxHeap = ref(178)
     const overKill = ref(false)
     const gameOver = ref(false)
     const gameWin = ref(false)
 
+    const resultInfo = ref<ResultInfoStock>({
+        title       : "ERROR",
+        score       : score.value,
+        heap        : heap.value,
+        overkill    : overKill.value,
+        goal        : goal.value   
+    })
+
+    watch([score, heap, overKill, goal], () => {
+        resultInfo.value.score = score.value
+        resultInfo.value.heap = heap.value
+        resultInfo.value.overkill = overKill.value
+        resultInfo.value.goal = goal.value
+    })
+
+    watch([gameOver], () => {
+        resultInfo.value.title = "Game Over"
+    })
+
+    watch([gameWin], () => {
+        resultInfo.value.title = "WIN"
+    })
+
     const startGame = () => {
+
+        resultInfo.value = {
+            title       : "ERROR",
+            score       : score.value,
+            heap        : heap.value,
+            overkill    : overKill.value,
+            goal        : goal.value 
+        }
         
-        let findNeighborResult:neighbourInfo
+        let findNeighborResult:NeighbourInfo
         gameWin.value =  false
         gameOver.value =  false
         score.value = 0
@@ -121,7 +127,9 @@
             const previousState = historyStack.value.pop(); // Извлекаем последнее сохраненное состояние
             if (previousState) {
                 // Восстанавливаем состояние grid
-                grid.splice(0, grid.length, ...previousState);
+                grid.splice(0, grid.length, ...previousState)
+                overKill.value = false
+                //score.value = 0
             }
         }
 
@@ -292,136 +300,12 @@
 
 <style scoped>
 
-#appStock{
-    text-align: center;
-    user-select: none;
-}
 
-.titleStock{
-    user-select: none;
-    font-family: "Bradley Hand", cursive;
-    font-size : 2.5em;
-    margin-bottom: 10px;
-}
-
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    width: var(--grid-fox-width);
-    user-select: none;
-}
-
-.info {
-    width: 40%;
-    font-size: 1.5em;
-    background: linear-gradient(to bottom, #23c79c, #fff323);
-    border-radius: 25px;
-    user-select: none;
-}
-
-.game-container {
-    display: inline-block;
-    margin-top: 20px;
-}
-
-.grid {
-    display: grid;
-   
-    grid-template-columns: repeat(var(--grid-stock-columns), var(--cell-stock-size));
-    gap: var(--gap-stock-size);
-    justify-content: center;
-    user-select: none;
-    margin: 0 auto;
-    width: var(--grid-fox-width);
-    border-radius: 3px;
-}
-
-.cell {
-    font-size: 2em;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    user-select: none;
-    border-radius: 10%;
-    border: 2px solid #000000;
-    aspect-ratio: 1;
-}
 
 .result {
     font-weight: 800;
     font:bolder;
     font-size: var(--font-min-size);
-}
-
-.cell {
-    min-width: var(--cell-stock-size);
-    min-height: var(--cell-stock-size);
-}
-
-.shift-left { will-change: transform; animation:  move-left 0.1s linear forwards;}
-@keyframes move-left {
-    0% { transform: translateX(0); }
-    100% { transform: translateX( calc(-1 * var(--cell-stock-size) - var(--gap-stock-size)) ); }
-}
-
-.shift-right {  will-change: transform; animation:  move-right 0.1s linear forwards;}
-@keyframes move-right {
-    0% { transform: translateX(0);}
-    100% { transform: translateX( calc(var(--cell-stock-size) + var(--gap-stock-size)) ); }
-}
-
-.shift-up {  will-change: transform; animation:  move-up 0.1s linear forwards; }
-@keyframes move-up {
-    0% { transform: translateY(0);}
-    100% { transform: translateY( calc(var(--cell-stock-size) + var(--gap-stock-size)) ); }
-}
-
-.shift-down {  will-change: transform; animation:  move-down 0.1s linear forwards; }
-@keyframes move-down {
-    0% { transform: translateY(0);}
-    100% { transform: translateY( calc(-1 * var(--cell-stock-size) - var(--gap-stock-size)) ); }
-}
-
-.new-data {  will-change: transform; animation:  new-data 0.1s linear forwards;}
-@keyframes new-data {
-    0% { transform:scale(0) }
-    100% { transform:scale(1) }
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: rgb(204, 204, 204);
-  width: 200px;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  will-change: transform;
-  animation: grow 0.1s ease-in-out;
-}
-
-@keyframes grow {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
 }
 
 button {
@@ -442,7 +326,6 @@ button:hover {
     font-family:'Papyrus',    
     /*,cursive*/
 }
-
 
 .A { background-color: #fd0101; }
 .B { background-color: #ffa600; }

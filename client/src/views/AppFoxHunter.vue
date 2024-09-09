@@ -20,7 +20,7 @@
         </div>
         <div class="game-container">
             <ModalViewFox 
-                v-if="gameWon" 
+                v-if="gameWon"
                 :resultInfo="resultInfo" 
                 @finish-game="finishGame"
             />

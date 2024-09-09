@@ -34,10 +34,17 @@ const messages: Messages = {
     your_clicks     : "Your clicks",
     your_time       : "Your time",
     total_score     : "Total score",
+    total_heap      : "Heap",
     fox_hunt_game   : "Fox Hunt Game",
     time            : "Time",
     clicks          : "Clicks",
-    restart_new_game: "Restart New Game"
+    restart_new_game: "Restart New Game",
+    restart         : "Restart",
+    rollback        : "Rollback",
+    continue        : "Continue",
+    "Game Over"     : "Game Over",
+    "No moves left" : "No moves left",
+    "Over limit"    : "Over limit"
   },
   ru: {
     welcomeGame     : 'Добро пожаловать в ChainCraft! (TECT)',
@@ -67,10 +74,17 @@ const messages: Messages = {
     your_clicks     : "Кликов",
     your_time       : "Время",
     total_score     : "Итого",
+    total_heap      : "Куча",
     fox_hunt_game   : "Охота на лис",
     time            : "Время",
     clicks          : "Кликов",
-    restart_new_game: "Начать новую игру"
+    restart_new_game: "Начать новую игру",
+    restart         : "Перезапуск",
+    rollback        : "Отменить ход",
+    continue        : "Продолжить",
+    "Game Over"     : "Конец игры",
+    "No moves left" : "Не осталось ходов",
+    "Over limit"    : "Перебор"
   },
 }
 

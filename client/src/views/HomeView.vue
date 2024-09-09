@@ -96,7 +96,7 @@
 
 .info {
     width: 45%;
-    font-size: 1.1em;
+    font-size: 1.5em;
     background: linear-gradient(to bottom, #23c79c, #fff323);
     border-radius: 25px;
     user-select: none;

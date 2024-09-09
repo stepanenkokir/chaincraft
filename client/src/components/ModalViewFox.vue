@@ -74,7 +74,7 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
     /*align-items: center;*/
     z-index: 1000;
 }
@@ -84,13 +84,22 @@
     width: 90vw; 
     position: fixed;
     padding: 10px;
-    margin-top: 20%;
+    /* margin-top: 20%; */
+    margin: 20% 5%;
     border-radius: 10px;
     text-align: center;
     will-change: transform;
     animation: grow 0.1s ease-in-out;
 }
 
+@keyframes grow {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .countResult, .timeResult, .scoreResult {
     font-weight: 800;
     font-size: 1em;    

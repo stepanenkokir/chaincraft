@@ -1,0 +1,91 @@
+#app-stock{
+    text-align: center;
+    user-select: none;
+}
+
+.title-stock{
+    user-select: none;
+    font-family: "Bradley Hand", cursive;
+    font-size : 2.5em;
+    margin-bottom: 10px;
+}
+
+.info-row-stock {
+    display: flex;
+    justify-content: space-between;
+    width: var(--grid-fox-width);
+    user-select: none;
+}
+
+.info-stock {
+    width: 40%;
+    font-size: 1.5em;
+    background: linear-gradient(to bottom, #23c79c, #fff323);
+    border-radius: 25px;
+    user-select: none;
+}
+
+.game-container-stock {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.grid-stock {
+    display: grid;
+   
+    grid-template-columns: repeat(var(--grid-stock-columns), var(--cell-stock-size));
+    gap: var(--gap-stock-size);
+    justify-content: center;
+    user-select: none;
+    margin: 0 auto;
+    width: var(--grid-fox-width);
+    border-radius: 3px;
+}
+
+.cell-stock {
+    font-size: 2em;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 10%;
+    border: 2px solid #000000;
+    aspect-ratio: 1;
+    min-width: var(--cell-stock-size);
+    min-height: var(--cell-stock-size);
+}
+
+.shift-left { will-change: transform; animation:  move-left 0.1s linear forwards;}
+@keyframes move-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX( calc(-1 * var(--cell-stock-size) - var(--gap-stock-size)) ); }
+}
+
+.shift-right {  will-change: transform; animation:  move-right 0.1s linear forwards;}
+@keyframes move-right {
+    0% { transform: translateX(0);}
+    100% { transform: translateX( calc(var(--cell-stock-size) + var(--gap-stock-size)) ); }
+}
+
+.shift-up {  will-change: transform; animation:  move-up 0.1s linear forwards; }
+@keyframes move-up {
+    0% { transform: translateY(0);}
+    100% { transform: translateY( calc(var(--cell-stock-size) + var(--gap-stock-size)) ); }
+}
+
+.shift-down {  will-change: transform; animation:  move-down 0.1s linear forwards; }
+@keyframes move-down {
+    0% { transform: translateY(0);}
+    100% { transform: translateY( calc(-1 * var(--cell-stock-size) - var(--gap-stock-size)) ); }
+}
+
+.new-data {  will-change: transform; animation:  new-data 0.1s linear forwards;}
+@keyframes new-data {
+    0% { transform:scale(0) }
+    100% { transform:scale(1) }
+}
+
