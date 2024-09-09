@@ -81,9 +81,7 @@ export const findOrCreateUser = async ( userInfo ) =>{
 }
 
 export const saveUserToken = async (socket, typeOfGame, gameState, gameId) => {
-    console.log("SAVE GAME TOKEN", socket.userInfo)
-    console.log("GAME ID", gameId)
-    console.log("GAME STATE", gameState)
+   
     try {
         const user = await db.users.findOne({
             where: { 
@@ -142,7 +140,6 @@ export const saveFoxGameResult = async (socket, gameState, resultInfo) => {
             count_result: resultInfo.count,
             score: resultInfo.score,
         }
-        console.log("foxGameInfo",foxGameInfo)
 
         const foxGame = await db.fox_game.create({
             user_id: user.user_id,
@@ -208,7 +205,6 @@ const updateTotalScore = async ( socket ) => {
 
         user.total_balance = totalBalance ? totalBalance.get('totalScore') : 0
 
-        console.log("Save new total_score",user)
         await user.save()
 
         socket.emit('new-user-balance', {

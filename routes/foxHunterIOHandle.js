@@ -85,7 +85,7 @@ export const handlePlayerMove = async (socket, { gameId, index, leftButton }) =>
     } else {
         // Обработка нажатия правой кнопки (пометка клетки)
         const currentStatus = await redis.hget(fieldKey, index)
-        console.log("CURRR ", currentStatus)
+       // console.log("CURRR ", currentStatus)
         const statusInfo = currentStatus.split('_')        
 
         newStatus=`${index}_${dT}_${leftButton}`
@@ -121,7 +121,7 @@ export const handlePlayerMove = async (socket, { gameId, index, leftButton }) =>
         // Оповещаем всех участников комнаты о новом ходе
         socket.to(gameId).emit('updateField', { index, status: newStatus, state: gameState.gameState , resultInfo})
         
-        console.log("FIN!!!")
+       // console.log("FIN!!!")
         // todo store result to MySQL
     } else {
         // Отправляем обновление клиенту

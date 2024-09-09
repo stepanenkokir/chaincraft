@@ -106,11 +106,9 @@
             })))
 
             findNeighborResult = findNeighbors()
-            console.log(findNeighborResult.gameOver)
+           // console.log(findNeighborResult.gameOver)
         } while (findNeighborResult.gameOver)             
     }
-
-   
 
     // Функция для добавления состояния в стек истории
     const saveHistory = () => {
