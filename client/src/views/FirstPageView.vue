@@ -8,7 +8,7 @@
     <p>
       <a href="https://t.me/Stock101SteKirBot?start=rules" target="_blank" class="rules-link">{{ t('clickHere') }}</a>{{ t('getReadyMsg_4') }}
     </p>
-    <MainButton text="Start" @click="startGame" class="start-button" />
+    <MainButton text="Start" @click="startGame" class="start-button-fp" />
   </div>
 </template>
   
@@ -86,7 +86,7 @@
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-.start-button {
+.start-button-fp {
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 1.5em;
@@ -98,7 +98,7 @@
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.start-button:hover {
+.start-button-fp:hover {
   background-color: #004d40;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }

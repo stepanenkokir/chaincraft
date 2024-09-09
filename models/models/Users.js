@@ -12,13 +12,13 @@ export default (sequelize) => {
         language_code       : DataTypes.STRING,
         last_name           : DataTypes.STRING,
         first_name          : DataTypes.STRING,
-        username            : DataTypes.STRING,        
+        username            : DataTypes.STRING,
         total_balance       : DataTypes.INTEGER,
-        current_game_id     : DataTypes.STRING,
+        current_game_id     : DataTypes.STRING,       
         current_game_type   : DataTypes.TINYINT,
     }, { 
         timestamps: true,
-        underscored: true, 
+        underscored: true,
     })
 
     return Users

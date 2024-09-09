@@ -11,7 +11,7 @@
             </main> 
         </div>
         <div  v-touch:swipe.left="onSwipeLeft" v-touch:swipe.right="onSwipeRight"  class="page-container" v-if="readyToShow">
-            <header>            
+            <header>
                 <Head :serverInfo="serverInfo" />
             </header>
             
@@ -105,7 +105,8 @@
             const loadUserInfo:responseServerInfoType = await checkUser( )
             if (loadUserInfo.success){
                 serverInfo.value = loadUserInfo.data
-                serverInfoStore.setUser( serverInfo.value )
+                serverInfoStore.setUser( serverInfo.value )                
+
                 showQR.value = false
                 startGame()                
             } else {

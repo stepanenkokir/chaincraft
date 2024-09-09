@@ -34,8 +34,8 @@
 }
 
 .logo {
-    width: 120px; /* Adjust the size as needed */
-    height: auto; /* Maintain aspect ratio */
+    width: 100px; /* Adjust the size as needed */
+    height: 100px; /* Maintain aspect ratio */
     margin-right: 40px; /* Space between image and text */
 }
 

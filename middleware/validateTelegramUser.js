@@ -1,38 +1,27 @@
-import { findOrCreateUser } from "../services/databaseHandler.js"
+
 import config from 'config'
 import crypto from 'crypto'
 
-export const checkUser = async (socket, data ) => {
-    const validUser = verifyTelegramData(data.initData)
+export const  validateUser = (socket, next) => {
+    const userInfo = socket.handshake.query.userInfo;
 
-    if (!validUser){
-        console.log('No validate')
-        return socket.emit('invalidToken', { status:false, message:"Invalid token"})
+    const validUser = decodeUserInfo(userInfo)
+   // console.log("validUser = ", validUser)
+    if (!validUser) {
+        console.log("Try emit invalidToken")
+        return socket.emit("invalidToken",{ status: false, message: "Invalid user"})        
     }
-    
-    const findUser = await findOrCreateUser( validUser )
-    if (findUser){
-        socket.emit('checkUserResponse', {
-            status      : true,
-            user_id     : findUser.data.user_id,
-            lang        : findUser.data.language_code,
-            user_name   : `${findUser?.data.first_name ? findUser.data.first_name : findUser.data.username }`, 
-            balance     : findUser.data.total_balance,
-            first_time  : findUser.first_time
-        })
-    } else {
-        return socket.emit('unknownUser', { status:false, message:`Invalid user ${JSON.stringify(validUser)}`})
-    }
+
+    socket.userInfo = validUser
+    next()
 }
 
-const verifyTelegramData = (initData) => {
-    if (initData.user_id===-211277){
-        return true
-    }
+const decodeUserInfo = (userInfo) =>{    
     try {
         const botToken = config.get('botToken')
         
-        const params = new URLSearchParams(initData)
+        const params = new URLSearchParams(userInfo)
+
         const currUser = JSON.parse(params.get('user'))
         if (!currUser){
             console.log("Invalid user")

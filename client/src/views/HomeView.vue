@@ -3,26 +3,40 @@
         <div class="button-container">
             <div class="info-row">
                 <div class="info">
-                    <div class="papirus-cursive">{{ t('Rating') }}: <span class="main-span">Newbie</span></div>
+                    <div class="papirus-cursive">{{ t('rank') }}: <span class="main-span">{{ currentRank }}</span></div>
                 </div>
                 <div class="info">
                     <div class="papirus-cursive">{{ t('balance') }}: <span class="main-span">{{ totalBalance }}</span></div>
                 </div>
             </div>
-            <button class="vertical-button" @click="startGame(1)">Stock101</button>
-            <button class="vertical-button" @click="startGame(2)">FoxHunter</button>
-            <button class="vertical-button" @click="startGame(3)">Tic Tac Toe</button>
+            <div 
+                v-for="(game, index) in games" 
+                :key="game.id" 
+                class="vertical-button-div"
+                >
+                <button class="vertical-button" @click="startGame(game.id)">
+                <h2>{{ game.name }}</h2>
+                <h5>{{ gameResult(game.id) }}</h5>
+                </button>
+            </div>
         </div>
     </div>
 </template>
   
 <script setup lang="ts">   
+    import { getRankInfo } from '@/services/RankInfo';
     import { useServerInfoStore } from '../stores/serverInfoStore'
     import type {ServerInfoType} from '@/types/ServerInfoType'
-    import { onBeforeMount, ref } from 'vue'
+    import { onBeforeMount, ref, computed } from 'vue'
     import { useI18n } from 'vue-i18n'
 
     const { t, locale } = useI18n()
+
+    const games = [
+        { id: 1, name: 'Stock101' },
+        { id: 2, name: 'FoxHunter' },
+        { id: 3, name: 'Tic Tac Toe' },
+    ]
 
     const serverInfoStore = useServerInfoStore()
 
@@ -30,7 +44,21 @@
 
     const emit = defineEmits(['select-game'])
 
-    const totalBalance = ref(user.value?.balance ?? 0)
+    const totalBalance = ref(0)
+
+    const currentRank = computed(() => {
+        const currRank = getRankInfo(totalBalance.value) 
+        //console.log("My Ballance = ",totalBalance.value, "Rank = ", currRank )     
+        return t(currRank)
+    })
+
+    // Получаем результат игры из serverInfoStore
+    const gameResult = computed(() => {
+        return (id: number) => {
+            const game = serverInfoStore.gameResults.find(g => g.id === id)
+            return game ? game.result : 0
+        }
+    })
 
     const startGame = ( id:number ) => {
         emit('select-game',id)
@@ -38,8 +66,10 @@
 
     onBeforeMount(()=>{
       user.value = serverInfoStore.serverInfo
-      console.log("Load ",user.value)
+     // console.log("Load ",user.value)
       locale.value = user.value?.lang ? user.value.lang : 'en'
+      //console.log("CURRENT USER = ", user.value)
+      totalBalance.value = user.value?.balance ? user.value?.balance : 0
     })
 
 
@@ -60,13 +90,13 @@
 .info-row {
     display: flex;
     justify-content: space-between;
-    width: 90%;
+    width: 80%;
     user-select: none;
 }
 
 .info {
-    width: 40%;
-    font-size: 1.5em;
+    width: 45%;
+    font-size: 1.1em;
     background: linear-gradient(to bottom, #23c79c, #fff323);
     border-radius: 25px;
     user-select: none;
@@ -89,8 +119,7 @@
 }
 
 .vertical-button {
-    width: 90%;
-    height: 15vh;
+    width: 100%;    
     font-size: 1.5rem;
     border: none;
     background-color: #4CAF50;
@@ -101,6 +130,10 @@
 
 .vertical-button:hover {
     background-color: #45a049;
+}
+
+.vertical-button-div {
+    width: 90%; 
 }
 </style>
 

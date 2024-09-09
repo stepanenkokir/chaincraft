@@ -1,6 +1,8 @@
 import crypto from 'crypto'
 import { Redis } from 'ioredis'
 
+import { saveFoxGameResult, saveUserToken, getUserBooster } from '../services/databaseHandler.js'
+
 const redis = new Redis()
 
 // Функция для генерации уникального ID игры
@@ -33,44 +35,42 @@ export const startNewFoxGame = async (socket) => {
         foxArray,                   // Массив с позициями лис
         moves: [],                  // История ходов
         spectators: [],             // Список наблюдателей
+        startTime:null,
+        finishTime:null,
         gameState: 'active',        // Текущее состояние игры (например, active, finished)
-    };
-
-    // Инициализируем поле в Redis (все клетки изначально "unchecked")
-    const fieldKey = `game:${gameId}:field`
-    for (let i = 0; i < 100; i++) {
-        await redis.hset(fieldKey, i, 'unchecked')
     }
-
-    // Сохраняем начальное состояние игры в Redis
-    await redis.set(`game:${gameId}:state`, JSON.stringify(gameState))
-    // Время жизни игры в базе - 1 час
-    await redis.expire(`game:${gameId}:state`, 3600)
-    // Присоединяем игрока к комнате  
+    // Присоединяем игрока к комнате
+    await saveUserToken(socket, 0, gameState, gameId)
     socket.join(gameId)
     socket.emit('gameCreated', { gameId })
-};
+}
 
 // Функция для обработки хода игрока
 export const handlePlayerMove = async (socket, { gameId, index, leftButton }) => {
-   
-    const fieldKey = `game:${gameId}:field`;
-    const gameStateKey = `game:${gameId}:state`;
+    const fieldKey = `foxHunterGame:${gameId}:field`;
+    const gameStateKey = `foxHunterGame:${gameId}:state`;
 
     // Загружаем текущее состояние игры
     const gameState = JSON.parse(await redis.get(gameStateKey));   
-
+    //console.log(gameState)
     // Проверяем, находится ли игра в активном состоянии
     if (gameState.gameState !== 'active') {
         socket.emit('error', { message: 'Game is not active.' });
         return;
-    }   
+    }
+    const currTime = new Date()
+    if (gameState.moves.length===0){
+        gameState.startTime = currTime
+    }
+    const startTime = new Date (gameState.startTime)
+    const dT = currTime.getTime() - startTime.getTime()
     // Определяем новое состояние клетки
     let newStatus
     if (leftButton) {
         const foxNearby = gameState.foxArray.includes(index)
         const revealedValue = calculateFoxProximity(index, gameState.foxArray)
-        newStatus = `${index}_${leftButton}_${revealedValue}_${foxNearby}`
+        
+        newStatus = `${index}_${dT}_${leftButton}_${revealedValue}_${foxNearby}`
 
         // Добавляем ход в историю
         gameState.moves.push(newStatus)
@@ -78,14 +78,30 @@ export const handlePlayerMove = async (socket, { gameId, index, leftButton }) =>
 
         //Проверяем лис
         if (foxNearby) {           
-            if (gameState.moves.filter(it=>it.endsWith('_true')).length === 5) {
+            if (gameState.moves.filter(it=>it.endsWith('_true')).length === 5) {               
                 gameState.gameState = 'finished' // Завершаем игру, если найдены все лисы
             }
         }
     } else {
         // Обработка нажатия правой кнопки (пометка клетки)
         const currentStatus = await redis.hget(fieldKey, index)
-        newStatus = currentStatus === 'checked' ? 'unchecked' : 'checked'
+        console.log("CURRR ", currentStatus)
+        const statusInfo = currentStatus.split('_')        
+
+        newStatus=`${index}_${dT}_${leftButton}`
+
+        if (statusInfo.length>4){
+            const newStat = statusInfo[2]==="true" ? "false" : "true"
+            newStatus = `${index}_${dT}_${newStat}_${statusInfo[3]}_${statusInfo[4]}`
+        }else {
+            if (statusInfo.length===3){
+                newStatus=`${index}_${dT}_null`
+            }
+        }
+       
+        
+        // newStatus = `${index}_${leftButton}_${revealedValue}_${dT}_${foxNearby}`
+        gameState.moves.push(newStatus)
     }
 
     // Обновляем состояние клетки в Redis
@@ -94,17 +110,56 @@ export const handlePlayerMove = async (socket, { gameId, index, leftButton }) =>
     // Обновляем состояние игры в Redis
     await redis.set(gameStateKey, JSON.stringify(gameState))
 
-    // Отправляем обновление клиенту
-    socket.emit('moveMade', { index, status: newStatus })
-
-    // Оповещаем всех участников комнаты о новом ходе
-    socket.to(gameId).emit('updateField', { index, status: newStatus })
-
     // Если игра закончена, уведомляем игроков
     if (gameState.gameState === 'finished') {
-        socket.emit('gameFinished', { gameId })
-        socket.to(gameId).emit('gameFinished', { gameId })
+        gameState.finishTime = currTime
+        const resultInfo = await calculateScore(socket, gameState)
+
+        await saveFoxGameResult(socket, gameState, resultInfo)
+         // Отправляем обновление клиенту
+        socket.emit('moveMade', { index, status: newStatus, state: gameState.gameState, resultInfo })
+        // Оповещаем всех участников комнаты о новом ходе
+        socket.to(gameId).emit('updateField', { index, status: newStatus, state: gameState.gameState , resultInfo})
+        
+        console.log("FIN!!!")
         // todo store result to MySQL
+    } else {
+        // Отправляем обновление клиенту
+        socket.emit('moveMade', { index, status: newStatus, state: gameState.gameState })
+        // Оповещаем всех участников комнаты о новом ходе
+        socket.to(gameId).emit('updateField', { index, status: newStatus, state: gameState.gameState})
+    }      
+
+}
+
+const calculateScore = async ( socket, gameState ) => {
+    const moves = gameState.moves
+    const nevMovesArr = moves.map(it=>{ 
+        const splitData = it.split('_')
+        return splitData[0]+"_"+splitData[2]+"_"+splitData[4]
+    })
+    const countMoves = [...new Set(nevMovesArr)].filter(it=>it.includes('_true_')).length
+    
+    const startTime = new Date (gameState.startTime)
+    const finishTime = new Date (gameState.finishTime)
+    const totalTime = finishTime.getTime() - startTime.getTime()
+
+    const userBooster = await getUserBooster(socket)
+
+    // time bonus is time in ms from 5 minutes of game
+    const timeFrom3Min = Math.floor((300000 - totalTime) / 1000)
+    const timeBonus = timeFrom3Min>0 ? timeFrom3Min : 0
+
+    // step bonus is steps from 50 steps
+    const stepCount = 50 - countMoves
+    const stepBonus = stepCount>0 ? stepCount*300 : 0
+    
+    const score = stepBonus>0 && timeBonus>0 ? userBooster * (stepBonus + timeBonus) : 1
+
+    return {
+        time    : totalTime,
+        count   : countMoves,
+        score   : score
     }
 }
 

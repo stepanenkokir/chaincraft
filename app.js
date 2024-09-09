@@ -4,9 +4,10 @@ import { fileURLToPath } from 'url'
 import config from 'config'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { checkUser } from './routes/socketIOHandle.js'
+import { checkUser } from './routes/socketIOHandleAPI.js'
 import { startNewFoxGame, handlePlayerMove } from './routes/foxHunterIOHandle.js'
 import { createAllDB } from './models/index.js'
+import {validateUser} from "./middleware/validateTelegramUser.js"
 
 const app = express()
 const httpServer = createServer(app)
@@ -19,16 +20,15 @@ const io = new Server(httpServer, {
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-
-const PORT =  config.has('port')? config.get('port'): 50007
-
 app.use(express.static(path.join(__dirname, 'client', 'dist')))
+
+io.use(validateUser)
 
 // Socket.io обработчики
 io.on('connection', (socket) => {
     console.log('Новый клиент подключился:', socket.id)
 
-    socket.on('checkUser', (userInfo) => checkUser(socket, userInfo))
+    socket.on('checkUser', () => checkUser(socket))
 
     //-------------- FOX HUNTER ------------------------------
     socket.on('startNewFoxGame',() => startNewFoxGame(socket))

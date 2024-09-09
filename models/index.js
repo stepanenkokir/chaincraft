@@ -39,7 +39,8 @@ const loadModels = async () => {
         const modelPath = path.join(modelsDirectory, file)
         const module = await import(modelPath)
         const model = module.default(sequelize, Sequelize.DataTypes)
-        const modelName = model.name.charAt(0).toUpperCase() + model.name.slice(1)
+        const modelName = model.name
+        console.log(modelName)
         db[modelName] = model
     }
 

@@ -38,6 +38,31 @@
     transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
+.cellFox.withFox::after {
+    content: "";
+    position: absolute;
+    width: 99%;
+    height: 99%;
+    background-color: rgb(245, 40, 119); /* Основной цвет фона */
+    border-radius: 50%; /* Закругление до круга */
+    
+    /* Градиент для придания объема */
+    background: radial-gradient(circle at 50% 50%, rgb(128, 0, 0), rgb(245, 40, 119));
+    
+    /* Тень для эффекта углубления */
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5),
+                inset 0 -4px 10px rgba(0, 0, 0, 0.3);
+    
+    /* Внешняя граница */
+    border: 4px solid #5c2d1a; /* Темная граница для создания ощущения края */
+    
+    /* Дополнительные стили для позиционирования */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: box-shadow 0.3s ease;
+}
+
 .cellFox:active {
     transform: translateY(1px); 
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); 
@@ -49,7 +74,7 @@
     background: url('@/assets/run_fox_frame.png') no-repeat;
     background-size: calc(var(--cell-fox-size)*6) auto;
     animation: play-fox-sprite 0.5s steps(6) infinite, move-fox-sprite-forward 2s linear forwards;
-    z-index: 10;
+    z-index: 100;
 }
 
 @keyframes play-fox-sprite {
@@ -96,4 +121,35 @@
 .grayscale {
     filter: grayscale(100%);
     opacity: 0.3;
+}
+
+.start-button {
+    display: block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.5em;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    max-width: var(--grid-fox-width);
+    background: linear-gradient(to bottom, #23c79c, #fff323); 
+    border-radius: 25px;
+    user-select: none;
+}
+
+.papirus-cursive{
+    font-family:'Papyrus',    
+    /*,cursive*/
+}
+
+.findBlink {
+    animation: blink 0.4s ease-in-out; 
+}
+@keyframes blink {
+    0%,100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
 }

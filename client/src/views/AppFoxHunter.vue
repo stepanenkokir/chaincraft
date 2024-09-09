@@ -1,12 +1,12 @@
 <template>
     <div id="appFox">
-        <h1 class="titleFox">Fox Hunt Game</h1> 
+        <h1 class="titleFox"> {{ t('fox_hunt_game') }}</h1> 
         <div class="info-row">
             <div class="info">
-                <span class="papirus-cursive">Time: <b>{{ formattedGameTime }}</b></span>               
+                <span class="papirus-cursive">{{ t('time') }}: <b>{{ formattedGameTime }}</b></span>               
             </div>
             <div class="info">
-                <span class="papirus-cursive">Clicks: <b>{{ clicks }}</b></span>              
+                <span class="papirus-cursive">{{ t('clicks') }}: <b>{{ clicks }}</b></span>              
             </div>
         </div>
         <div class="rowOfIcon">
@@ -19,28 +19,22 @@
             />
         </div>
         <div class="game-container">
-            <div v-if="gameWon" class="modal-overlay">
-                <div class="pyro">
-                    <div class="before"></div>
-                    <div class="after"></div>
-                </div>
-                <div class="modal">
-                    <h2>WIN</h2>
-                    <hr/>
-                    <h3>You won the game in {{ formattedGameTime }} and {{ clicks }} clicks.</h3>
-                    <button class="start-button papirus-cursive" @click="startGame">OK</button>
-                </div>
-            </div>
+            <ModalViewFox 
+                v-if="gameWon" 
+                :resultInfo="resultInfo" 
+                @finish-game="finishGame"
+            />
+
             <div class="gridFox">
                 <div
                     v-for="cell in grid"
                     :key="cell.index"
                     :class="[
                         'cellFox', 
-                        cell.clicked ? 'clicked' : '', 
-                        cell.flagged ? 'flagged' : '', 
+                        cell.clicked ? 'clicked' : '',                        
                         cell.withFox ? 'withFox' : '',
                         cell.findBlink ? 'findBlink' : '',
+                        cell.flagged ? 'flagged' : '',
                     ]"
                     @click="handleClick(cell.index)"
                     @contextmenu.prevent="handleRightClick(cell.index)"
@@ -54,23 +48,24 @@
             </div>
         </div>
        
-        <button class="start-button papirus-cursive" @click="startGame">Restart New Game</button>
+        <button 
+            class="start-button papirus-cursive" 
+            @click="startGame"
+            >
+            {{ t('restart_new_game') }}
+        </button>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
 import { startNewFoxGame, checkFoxResult } from '../services/socketIOHandle'
-
-// Types
-interface GridCell {
-    index: number;
-    clicked: boolean;
-    result: string;
-    flagged: boolean;
-    withFox: boolean;
-    findBlink: boolean;
-}
+import type { GridCell, ResultInfo } from '@/types/FoxHunterInterface';
+import ModalViewFox from '@/components/ModalViewFox.vue';
+import { useI18n } from 'vue-i18n'    
+import { useServerInfoStore } from '../stores/serverInfoStore'  
+const { t, locale } = useI18n()
+const serverInfoStore = useServerInfoStore()
 
 const grid = reactive<GridCell[]>([])
 const gameWon = ref(false)
@@ -78,8 +73,14 @@ const clicks = ref(0)
 const findedFox = ref(0)
 const timerFoxGame = ref< number | null>(null);
 const gameTime = ref(0)
+const totalWin = ref(false)
 const firstClick = ref(true)
 const gameId = ref<string|null>(null)
+const resultInfo = ref<ResultInfo>({
+    time: 0,
+    count: 0,
+    score : 0
+})
 
 const formattedGameTime = computed(() => {
     const minutes = Math.floor(gameTime.value / 60);
@@ -88,12 +89,23 @@ const formattedGameTime = computed(() => {
 })
 
 const clearFindBlink = () => {
-    grid.forEach(cell => cell.findBlink=false) 
+    grid.forEach(cell => {cell.findBlink=false }) 
+}
+
+const finishGame = () =>{
+    gameWon.value = false
+    totalWin.value = true
 }
 
 const startGame = async () => {
+    resultInfo.value = {
+        time: 0,
+        count: 0,
+        score : 0
+    }
     gameWon.value = false
     clicks.value = 0
+    totalWin.value = false
     findedFox.value = 0
     if (timerFoxGame.value !== null) {
         clearInterval(timerFoxGame.value);
@@ -130,7 +142,7 @@ const handleClick = async ( index: number ) => {
     fillGrid( index, 'find')
     setTimeout( () => {clearFindBlink()}, 500 )
 
-    if ( grid[index].clicked || gameWon.value ){
+    if ( grid[index].clicked || gameWon.value || totalWin.value ){
         return
     } 
 
@@ -155,15 +167,14 @@ const handleClick = async ( index: number ) => {
    // console.log("Result moveResult ",moveResult)
     if (!moveResult.success){
         return console.error("Error moveResult ", moveResult.message)
-    }    
-    const decodeResult = moveResult.data.status.split('_')
-  
-    const data = {
-        visibleFoxes : decodeResult[2], 
-        result       : decodeResult[3]==="true" ? "fox" : null
     }
 
-    console.log(data)
+    const decodeResult = moveResult.data.status.split('_')
+ 
+    const data = {
+        visibleFoxes : decodeResult[3], 
+        result       : decodeResult[4]==="true" ? "fox" : null
+    }
 
     grid[index].clicked = true
     grid[index].flagged = false
@@ -171,20 +182,19 @@ const handleClick = async ( index: number ) => {
     if (data.result === 'fox') {
         findedFox.value++
         grid[index].withFox = true
-       // grid[index].result =  '🐺 ' + data.visibleFoxes
     } 
 
-    if ( data.visibleFoxes === "0" ){
-        console.log("FILLL")
+    if ( data.visibleFoxes === "0" ){   
         fillGrid( index, 'flag' )
     }
     
-    if (findedFox.value === 5) {
+    if (moveResult.data.state==="finished") {
         if (timerFoxGame.value !== null) {
             clearInterval(timerFoxGame.value)
         }
-        gameWon.value = true;
-    }
+        resultInfo.value = moveResult.data.resultInfo
+        gameWon.value = true
+    } 
 }
 
 const fillGrid = ( index:number, type:string="" ) => {
@@ -225,15 +235,22 @@ const fillGrid = ( index:number, type:string="" ) => {
     })
 }
 
-const handleRightClick = ( index:number ) => {
-    console.log("handleRightClick!!!")
-    if ( grid[index].withFox ){
+const handleRightClick = async ( index:number ) => {   
+    if ( totalWin.value || firstClick.value){
         return
     }
+
+    if (!gameId.value) {
+        console.error("No gameId :o(")
+        return 
+    }
+
+    const moveResult = await checkFoxResult( gameId.value, index, false)
     grid[index].flagged = !grid[index].flagged
 }
 
 onMounted(() => {
+    locale.value = serverInfoStore.locale 
     startGame()
 })
 </script>
@@ -259,68 +276,8 @@ onMounted(() => {
     display: inline-block;
 }
 
-.findBlink {
-    animation: blink 0.4s ease-in-out; 
-}
-@keyframes blink {
-    0%,100% {
-        opacity: 1;
-    }
-    30% {
-        opacity: 0.7;
-    }
-    
-}
-
-.withFox {
-    background-color:rgb(245, 40, 119); 
-}
-
 .flagged{
     background-color:rgb(146, 128, 84); 
-}
-
-.start-button {
-    display: block;
-    margin-top: 20px auto;
-    padding: 10px 20px;
-    font-size: 1.5em;
-    font-weight: 800;
-    cursor: pointer;
-    width: 100%;
-    max-width: var(--grid-fox-width);
-    background: linear-gradient(to bottom, #23c79c, #fff323); 
-    border-radius: 25px;
-    user-select: none;
-}
-.papirus-cursive{
-    font-family:'Papyrus',    
-    /*,cursive*/
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    /*align-items: center;*/
-    z-index: 1000;
-}
-
-.modal {
-    background: rgb(204, 204, 204);
-    width: 90vw;
-    height: 20vh;
-    padding: 10px;
-    margin-top: 20%;
-    border-radius: 10px;
-    text-align: center;
-    will-change: transform;
-    animation: grow 0.1s ease-in-out;
 }
 
 .flag {
@@ -339,6 +296,5 @@ onMounted(() => {
     z-index: 2; /* значение больше, чем у flag */
     pointer-events: none; /* чтобы клики не проходили сквозь */
 }
-
 
 </style>

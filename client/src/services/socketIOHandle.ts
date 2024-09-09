@@ -22,9 +22,28 @@ let socket: any
 
 // Инициализация соединения с сервером Socket.IO
 export const initializeSocketConnection = async () => {
+
+    const { initData } = useWebApp()
+    let cInitData = initData    
+    if (initData===''){
+        console.log("testMode=",testMode)
+        if (testMode==='test'){            
+            cInitData = "user=%7B%22id%22%3A-211277%2C%22language_code%22%3A%22ru%22%2C%22last_name%22%3A%22Guinea%22%2C%22first_name%22%3A%22Pig%22%2C%22username%22%3A%22Plaksik%22%2C%22token%22%3A%22987654321%22%2C%22balance%22%3A0%7D"
+        } else {
+            return Promise.reject({
+                success : false,
+                data    : null,
+                message : 'No Telegram'
+            })
+        }
+    }
+
     socket = io(SERVER_URL, {
         transports: ['websocket'],
         reconnectionAttempts: 3,
+        query : {
+            userInfo : cInitData
+        }
     })
 
     socket.on('connect', () => {
@@ -35,6 +54,10 @@ export const initializeSocketConnection = async () => {
         showAlertInfo('Disconnected from the server')
     })
 
+    socket.on('invalidToken', (response: any) => {
+        showAlertInfo('INVALID TOKEN')
+    })
+
     socket.on('failMove', ( msg: string ) => {
         showAlertInfo('Incorrect move: '+JSON.stringify(msg))
     })
@@ -43,28 +66,19 @@ export const initializeSocketConnection = async () => {
         showAlertInfo(`Connection error: ${JSON.stringify(err)}`)
     })
 
+    socket.on('new-user-balance', ( newBalance: number ) => {
+        console.log("new-user-balance:", newBalance)
+    })
+
+    
+
     return socket
 }
 
 // Функция для загрузки информации о пользователе с сервера
 export const checkUser = (): Promise<responseServerInfoType> => {
-    const { initData } = useWebApp()
-    let cInitData = initData    
-    if (initData===''){
-        console.log("testMode=",testMode)
-        if (testMode==='test'){            
-            cInitData = "user=%7B%22id%22%3A-211277%2C%22language_code%22%3A%22en%22%2C%22last_name%22%3A%22Guinea%22%2C%22first_name%22%3A%22Pig%22%2C%22username%22%3A%22Plaksik%22%2C%22token%22%3A%22987654321%22%2C%22balance%22%3A0%7D"
-        } else {
-            return Promise.reject({
-                success : false,
-                data    : null,
-                message : 'No Telegram'
-            })
-        }
-    }
-  
     return new Promise((resolve, reject) => {
-        socket.emit('checkUser', { initData:cInitData })
+        socket.emit('checkUser', { })
         // Используем socket.once для одноразового прослушивания события
         socket.once('checkUserResponse', (response: any) => {
             if (!response || response.error) {
@@ -78,21 +92,6 @@ export const checkUser = (): Promise<responseServerInfoType> => {
                 success : true,
                 data    : response,
                 message : null
-            })
-        })
-
-        socket.once('invalidToken', (response: any) => {
-            if (!response || response.error) {
-                return reject({
-                    success : false,
-                    data    : null,
-                    message : response ? response.error : 'Unknown error invalidToken'
-                })
-            }
-            resolve({
-                success : false,
-                data    : response,
-                message : "Invalid token"
             })
         })
 
@@ -141,6 +140,21 @@ export const checkFoxResult = (gameId: string, index: number, leftButton: Boolea
     return new Promise((resolve, reject) => {
         socket.emit('checkFoxResult', { gameId, index, leftButton })
         socket.once('moveMade', (response: any) => {            
+            if (!response || response.error) {
+                return reject({
+                    success : false,
+                    data    : null,
+                    message : response ? response.error : 'Unknown error moveProcessed'
+                })
+            }
+            resolve({
+                success : true,
+                data    : response,
+                message : "Move Processed"
+            })
+        })
+
+        socket.once('game_fox_finished', (response: any) => {            
             if (!response || response.error) {
                 return reject({
                     success : false,
